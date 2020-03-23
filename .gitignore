@@ -1,0 +1,12 @@
+# Editors
+.idea/
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Weird outputs
+*.log
+
+# Secrets
+system/.bash_secrets
