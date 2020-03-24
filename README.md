@@ -4,7 +4,7 @@
 
 ## Requirements
 
-- [GNU Stow]()
+- [GNU Stow](https://www.gnu.org/software/stow/)
 
 ## Usage
 To make sure that I'm installed, run the following command:
