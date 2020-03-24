@@ -7,6 +7,11 @@
 - [GNU Stow]()
 
 ## Usage
+To make sure that I'm installed, run the following command:
+```bash
+git clone https://github.com/tjmaynes/dotfiles $HOME/.dotfiles
+``` 
+
 To setup `dotfiles`, run the following command:
 ```bash
 make setup
