@@ -8,13 +8,15 @@ ensure_stow_installed:
 	$(call check_dependency,stow)
 
 setup: ensure_stow_installed
-	chmod +x ./scripts/setup_dotfiles.sh
-	./scripts/setup_dotfiles.sh \
-	$(DOTFILES_DIR) \
-	$(HOME)
+	stow \
+		--restow \
+		--verbose \
+		--target=$(HOME) \
+		$(DOTFILES_DIR)
 
-teardown:
-	chmod +x ./scripts/teardown.sh
-	./scripts/teardown.sh \
-	$(DOTFILES_DIR) \
-	$(HOME)
+teardown: ensure_stow_installed
+	stow \
+		--delete \
+		--verbose \
+		--target=$(HOME) \
+		$(DOTFILES_DIR)
