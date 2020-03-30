@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Kubectl auto-complete
+source <(kubectl completion zsh)
+
+alias k8s_start_proxy='kubectl proxy'
+
+k8s_create_dashboard()
+{
+  KUBERNETES_DASHBOARD_VERSION="v2.0.0-beta8" 
+
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/$KUBERNETES_DASHBOARD_VERSION/aio/deploy/recommended.yaml
+}
+
+k8s_set_token()
+{
+  KUBERNETES_NAMESPACE=$1
+  [[ -z $KUBERNETES_NAMESPACE ]]; KUBERNETES_NAMESPACE="kube-system"
+
+  KUBERNETES_CONTEXT=$2
+  [[ -z $KUBERNETES_CONTEXT ]]; KUBERNETES_CONTEXT="docker-desktop"
+
+  KUBERNETES_TOKEN=$(kubectl -n $KUBERNETES_NAMESPACE get secrets -o jsonpath='{.items[0].data.token}') 
+  kubectl -n $KUBERNETES_NAMESPACE config set-credentials $KUBERNETES_CONTEXT --token="${KUBERNETES_TOKEN}"
+  
+  echo "$KUBERNETES_TOKEN"
+}
