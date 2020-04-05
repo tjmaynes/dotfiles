@@ -31,7 +31,7 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && \. "$SDKMAN_DIR/bin/sdkman-init.sh"
 
 # Pyenv
-eval "$(pyenv init -)"
+[[ -x "$(command -v pyenv)" ]]; eval "$(pyenv init -)"
 
 
 ############################################
@@ -39,7 +39,7 @@ eval "$(pyenv init -)"
 ############################################
 
 # Kubectl auto-complete
-source <(kubectl completion zsh)
+[[ -x "$(command -v kubectl)" ]]; source <(kubectl completion zsh)
 
 alias k8s_start_proxy='kubectl proxy'
 
@@ -128,4 +128,4 @@ get_public_key()
   gpg --armor --export $1 | pbcopy  
 }
 
-(touch ~/.bash_secrets || true) && source ~/.bash_secrets
+[[ ! -f $HOME/.bash_secrets ]]; source $HOME/.bash_secrets
