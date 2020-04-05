@@ -1,20 +1,15 @@
+#!/usr/bin/make
+
 DOTFILES_DIR ?= system
 
-define check_dependency
-	command -v $1
-endef
-
-ensure_stow_installed:
-	$(call check_dependency,stow)
-
-setup: ensure_stow_installed
+setup:
 	stow \
 		--restow \
 		--verbose \
 		--target=$(HOME) \
 		$(DOTFILES_DIR)
 
-teardown: ensure_stow_installed
+teardown:
 	stow \
 		--delete \
 		--verbose \
