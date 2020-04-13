@@ -32,18 +32,12 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 
 # Pyenv
-if [[ -x "$(command -v pyenv)" ]]; then
-  eval $(pyenv init -)
-fi
-
+[[ -x "$(command -v pyenv)" ]]; eval "$(pyenv init -)"
 
 ############################################
 #############   Kubernetes   ###############
 ############################################
-
-if [[ -x "$(command -v kubectl)" ]]; then
-  source <(kubectl completion zsh)
-fi
+[[ -x "$(command -v kubectl)" ]]; source <(kubectl completion zsh)
 
 alias k8s_start_proxy='kubectl proxy'
 
