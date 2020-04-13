@@ -27,6 +27,7 @@ set autochdir                       "start vim in current directory
 set hidden
 set autoread
 
+set number
 set statusline=[%n]\ %<%.99f\ %h%w%m%r%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%y%=%-16(\ %l,%c-%v\ %)%P
 set laststatus=2                    "always show status line
 set modeline
