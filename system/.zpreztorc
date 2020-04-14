@@ -5,8 +5,8 @@ zstyle ':prezto:load' pmodule \
   'terminal' \
   'editor' \
   'history' \
-  'directory' \
   'spectrum' \
+  'directory' \
   'utility' \
   'ssh' \
   'completion' \
@@ -15,7 +15,6 @@ zstyle ':prezto:load' pmodule \
   'history-substring-search' \
   'prompt' \
   'python' \
-  'node' \
   'tmux' \
   'gpg'
 
