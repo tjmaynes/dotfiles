@@ -111,5 +111,3 @@ get_public_key()
 {
   gpg --armor --export $1 | pbcopy  
 }
-
-[[ ! -f $HOME/.bash_secrets ]]; source $HOME/.bash_secrets
