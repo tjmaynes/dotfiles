@@ -17,6 +17,7 @@ export GPG_TTY=$(tty)
 
 # Pyenv
 [[ -x "$(command -v pyenv)" ]]; eval "$(pyenv init -)"
+export PATH="$HOME/.pyenv/bin:$PATH"
 
 ############################################
 #############   Kubernetes   ###############
