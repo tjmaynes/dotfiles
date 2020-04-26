@@ -4,7 +4,7 @@ DOTFILES_DIR ?= system
 
 setup:
 	stow \
-		--restow \
+		--stow \
 		--verbose \
 		--target=$(HOME) \
 		$(DOTFILES_DIR)
