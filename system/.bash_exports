@@ -22,6 +22,9 @@ export GPG_TTY=$(tty)
 #############   Kubernetes   ###############
 ############################################
 
+alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgd='kubectl get deployments'
 alias k8s_start_proxy='kubectl proxy'
 
 k8s_create_dashboard()
