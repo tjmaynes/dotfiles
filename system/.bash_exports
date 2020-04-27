@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export LANG=en_US.UTF-8
 export EDITOR=vi
@@ -16,8 +16,9 @@ export PATH=/usr/local/bin:$PATH
 export GPG_TTY=$(tty)
 
 # Pyenv
-[[ -x "$(command -v pyenv)" ]]; eval "$(pyenv init -)"
+export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$HOME/.pyenv/bin:$PATH"
+[[ -x "$(command -v pyenv)" ]]; eval "$(pyenv init -)"
 
 ############################################
 #############   Kubernetes   ###############
