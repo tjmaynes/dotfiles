@@ -18,7 +18,16 @@ export GPG_TTY=$(tty)
 # Pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$HOME/.pyenv/bin:$PATH"
-[[ -x "$(command -v pyenv)" ]]; eval "$(pyenv init -)"
+#[[ -f "$HOME/.pyenv" ]]; eval "$(pyenv init -)"
+
+# SDKMan
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && \. "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 ############################################
 #############   Kubernetes   ###############
@@ -60,7 +69,6 @@ alias gen-pass='openssl rand -base64 25 | tr -d /'
 alias port-usage='sudo lsof -i -P -n | grep LISTEN'
 alias init-git='git init && echo ".DS_Store" > .gitignore && touch README.markdown'
 alias uuid='uuidgen'
-alias gocode='cd $GOPATH/src/github.com/tjmaynes'
 alias gpg-force-restart='gpgconf --kill gpg-agent'
 alias check-disk-space='du -shxc /*'
 alias start-docker='systemctl enable --now docker'
