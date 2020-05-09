@@ -13,3 +13,5 @@ system/.bash_secrets
 
 # VSCode
 system/.config/Code/machineid
+
+system/.config/configstore
