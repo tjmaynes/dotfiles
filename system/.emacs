@@ -59,14 +59,6 @@
   (add-to-list 'package-archives
 	       '("gnu" . "https://elpa.gnu.org/packages/") t))
 
-(defun secrets/setup ()
-  (setq epa-pinentry-mode 'loopback)
-  (epa-file-enable))
-
-(defun secrets/get-secrets (secrets-location)
-  (secrets/setup)
-  (utilities/read-json-file secrets-location))
-
 (defun backup/setup ()
   (package-manager/ensure-packages-installed 'magit)  
   (setq backup-by-copying t
@@ -162,13 +154,12 @@
 (defun development/shell-setup ()
   (when window-system (development/set-exec-path-from-shell-PATH)))
 
-(defun development/setup (development-config)
-  (let ((development-directory (gethash "directory" development-config)))
-    (development/file-setup)
-    (development/html-setup)
-    (development/emacs-lisp-setup)
-    (development/clojure-setup)
-    (development/shell-setup)))
+(defun development/setup ()
+  (development/file-setup)
+  (development/html-setup)
+  (development/emacs-lisp-setup)
+  (development/clojure-setup)
+  (development/shell-setup))
 
 (defun theme/cli-setup ()
   (package-manager/ensure-packages-installed 'zenburn-theme)
@@ -194,7 +185,6 @@
     (display-time)
     (menu-bar-mode -1)
     (tool-bar-mode -1)
-    (toggle-scroll-bar -1)
     (theme/cli-setup)))
 
 (defun writing/org-setup (org-directory)
@@ -261,44 +251,14 @@
   (writing/screenplay-setup)
   (writing/extra-tools-setup))
 
-(defun chat/connect ()
-  (interactive)
-  (let* ((secrets-location (utilities/get-environment-variable "EMACS_SECRET_CONFIG"))
-	 (secrets (secrets/get-secrets secrets-location))
-	 (chat-config (gethash "chat" secrets))
-	 (server (gethash "server" chat-config))
-	 (port (gethash "port" chat-config))
-	 (nickname (gethash "nickname" chat-config))
-	 (fullname (gethash "fullname" chat-config))
-	 (userid (gethash "userid" chat-config))
-	 (password (gethash "password" chat-config)))
-    (erc-tls :server server :port port :password password
-	     :nick nickname :full-name fullname)))
-
-(defun chat/setup (chat-config)
-  (let ((chat-directory (gethash "directory" chat-config))
-	(rooms (gethash "rooms" chat-config)))
-    (package-manager/ensure-packages-installed 'erc)
-    (setq erc-enable-logging t
-	  erc-kill-buffer-on-part t
-	  erc-log-channels-directory chat-directory
-	  erc-save-buffer-on-part nil
-	  erc-save-queries-on-quit nil
-	  erc-log-write-after-send t
-	  erc-log-write-after-insert t
-	  erc-autojoin-channels-alist rooms)
-    (erc-fill-mode t)
-    (erc-scrolltobottom-mode t)))
-
-(defun media/music-setup (music-config)
-  (let ((music-directory (gethash "directory" music-config)))
-    (package-manager/ensure-packages-installed 'emms)
-    (setq emms-player-list '(emms-player-mpv)
+(defun media/music-setup ()
+  (package-manager/ensure-packages-installed 'emms)
+  (setq emms-player-list '(emms-player-mpv)
 	  emms-info-asynchronously t
 	  emms-show-format "♪ %s"
 	  emms-playlist-default-major-mode 'emms-playlist-mode)
-    (emms-standard)
-    (emms-default-players)))
+  (emms-standard)
+  (emms-default-players))
 
 (defun media/rss-feed-setup ()
   (package-manager/ensure-packages-installed 'elfeed 'elfeed-web)
@@ -320,11 +280,10 @@
   (add-hook 'nov-mode-hook 'visual-line-mode)
   (add-hook 'nov-mode-hook 'visual-fill-column-mode))
 
-(defun media/setup (media-config)
-  (let ((music-config (gethash "music" media-config)))
-    (media/music-setup music-config)
-    (media/rss-feed-setup)
-    (media/ebook-setup)))
+(defun media/setup ()
+  (media/music-setup)
+  (media/rss-feed-setup)
+  (media/ebook-setup))
 
 (defun web-browser/setup ()
   (package-manager/ensure-packages-installed 'w3m)
@@ -418,25 +377,21 @@
     (mail/gnus-view-setup mail-config)
     (mail/gnus-mailbox-setup mail-config))
 
-(defun initialize (secrets-location)
-  (let* ((config (secrets/get-secrets secrets-location))
+(defun initialize ()
+  (let* ((config (utilities/read-json-file "~/.emacs.json"))
 	 (writing-config (gethash "writing" config))
 	 (git-config (gethash "git" config))
-	 (development-config (gethash "development" config))
-	 (chat-config (gethash "chat" config))
 	 (mail-config (gethash "mail" config))
-	 (theme-config (gethash "theme" config))
-	 (media-config (gethash "media" config)))
+	 (theme-config (gethash "theme" config)))
     (package-manager/setup)
     (version-control/setup git-config)
     (key-bindings/setup)
     (backup/setup)
     (web-browser/setup)
     (theme/setup theme-config)
-    (development/setup development-config)
+    (development/setup)
     (writing/setup writing-config)
     (mail/setup mail-config)
-    (chat/setup chat-config)
-    (media/setup media-config)))
+    (media/setup)))
 
-(initialize (utilities/get-environment-variable "EMACS_SECRET_CONFIG"))
+(initialize)

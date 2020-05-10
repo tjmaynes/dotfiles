@@ -1,0 +1,23 @@
+{
+  "git": {
+    "directory": "~/workspace",
+    "repos": [
+      "tjmaynes/tjmaynes.github.io",
+      "tjmaynes/notebook"
+    ]
+  },
+  "writing": {
+    "directory": "~/workspace/tjmaynes/notebook",
+    "spellchecker-file": "~/.aspell.en.pws"
+  },
+  "theme": {
+    "bookmarks-file": "~/.emacs-bookmarks",
+    "initial-message": "Do it fearlessly."
+  },
+  "mail": {
+    "directory": "~/workspace/mail",
+    "auth-credentials-file": "~/.authinfo.gpg",
+    "full-name": "TJ Maynes",
+    "address": "tj@tjmaynes.com"
+  }
+}
