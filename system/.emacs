@@ -297,7 +297,7 @@
 
 (defun version-control/clone-repo (repo destination)
   (let* ((path (expand-file-name (file-name-nondirectory repo) destination))
-	 (change-directory-command (format "cd %s" destination))
+	 (change-directory-command (format "(mkdir -p %s || true) && cd %s" destination destination))
 	 (clone-command (format "git clone git@github.com:%s.git" repo))
 	 (go-to-directory-and-clone-command (concat change-directory-command " && " clone-command)))
     (if (not (file-directory-p path))

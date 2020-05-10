@@ -1,6 +1,6 @@
 {
   "git": {
-    "directory": "~/workspace",
+    "directory": "~/workspace/tjmaynes",
     "repos": [
       "tjmaynes/tjmaynes.github.io",
       "tjmaynes/notebook"
