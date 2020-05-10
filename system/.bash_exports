@@ -75,14 +75,13 @@ alias gpg-force-restart='gpgconf --kill gpg-agent'
 alias check-disk-space='du -shxc /*'
 alias start-docker='systemctl enable --now docker'
 alias stop-docker='systemctl disable docker'
-alias switch_to_zsh='chsh -s $(grep /zsh$ /etc/shells | tail -1)'
+alias switch-to-zsh='chsh -s $(grep /zsh$ /etc/shells | tail -1)'
 alias workie='cd $HOME/workspace/tjmaynes'
 
-gpg-easy-encrypt()
+start-ssh-agent()
 {
-  gpg \
-    --output $1.gpg \
-    --encrypt --recipient $2 $1 
+  eval $(ssh-agent -s)
+  ssh-add ~/.ssh/id_rsa
 }
 
 docker-clean-all()
@@ -101,10 +100,10 @@ docker-stop-and-remove-image()
 
 generate_test_ssl_cert()
 {
-  generate_ssl_cert test "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"
+  generate-ssl-cert test "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"
 }
 
-generate_ssl_cert()
+generate-ssl-cert()
 {
   openssl genrsa -des3 -passout pass:x -out $1.pass.key 2048
   openssl rsa -passin pass:x -in $1.pass.key -out $1.key
@@ -113,10 +112,18 @@ generate_ssl_cert()
   openssl x509 -req -sha256 -days 365 -in $1.csr -signkey $1.key -out $1.crt
 }
 
-convert_to_gif()
+convert-to-gif()
 {
   ffmpeg -i $1 -s $2 -pix_fmt rgb8 -r 25 -f gif - | gifsicle --optimize=3 --delay=3 > screencast_`date +"%Y.%m.%d-%H.%M"`.gif
 }
+
+gpg-easy-encrypt()
+{
+  gpg \
+    --output $1.gpg \
+    --encrypt --recipient $2 $1 
+}
+
 
 get_public_key()
 {

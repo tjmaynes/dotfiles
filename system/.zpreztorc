@@ -18,6 +18,4 @@ zstyle ':prezto:load' pmodule \
   'tmux' \
   'gpg'
 
-zstyle ':prezto:module:ssh:load' identities 'id_rsa'
-
 zstyle ':prezto:module:prompt' theme 'steeef'
