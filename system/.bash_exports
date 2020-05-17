@@ -112,20 +112,7 @@ generate-ssl-cert()
   openssl x509 -req -sha256 -days 365 -in $1.csr -signkey $1.key -out $1.crt
 }
 
-convert-to-gif()
-{
-  ffmpeg -i $1 -s $2 -pix_fmt rgb8 -r 25 -f gif - | gifsicle --optimize=3 --delay=3 > screencast_`date +"%Y.%m.%d-%H.%M"`.gif
-}
+if [[ -f "$HOME/.bash_secrets" ]]; then
+  source $HOME/.bash_secrets
+fi
 
-gpg-easy-encrypt()
-{
-  gpg \
-    --output $1.gpg \
-    --encrypt --recipient $2 $1 
-}
-
-
-get_public_key()
-{
-  gpg --armor --export $1 | pbcopy  
-}
