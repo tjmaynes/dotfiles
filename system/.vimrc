@@ -86,16 +86,20 @@ Plug 'scrooloose/syntastic'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'jamessan/vim-gnupg'
+Plug 'editorconfig/editorconfig-vim'
 
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 Plug 'vim-scripts/fountain.vim'
-
 Plug 'elzr/vim-json'
+
 Plug 'vim-python/python-syntax'
+Plug 'udalov/kotlin-vim'
+
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'isRuslan/vim-es6'
+
 Plug 'ekalinin/Dockerfile.vim'
 
 call plug#end()
