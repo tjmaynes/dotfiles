@@ -95,6 +95,7 @@ Plug 'elzr/vim-json'
 Plug 'cespare/vim-toml'
 Plug 'hashivim/vim-terraform'
 
+Plug 'vim-python/python-syntax'
 Plug 'fatih/vim-go'
 
 Plug 'pangloss/vim-javascript'
