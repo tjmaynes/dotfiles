@@ -11,6 +11,7 @@ else
 fi
 
 export PATH=/usr/local/bin:$PATH
+export WORKSPACE_DIRECTORY=$HOME/workspace
 
 # Golang
 
@@ -21,6 +22,7 @@ export PATH=$GOBIN:$PATH
 export PATH=/usr/local/go/bin:$PATH
 
 # Pyenv
+
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
@@ -28,6 +30,7 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 
 # NVM
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
@@ -82,6 +85,12 @@ alias start-docker='systemctl enable --now docker'
 alias stop-docker='systemctl disable docker'
 alias switch-to-zsh='chsh -s $(grep /zsh$ /etc/shells | tail -1)'
 alias workie='cd $HOME/workspace/tjmaynes'
+
+clone()
+{
+  git clone git@github.com:$1 $WORKSPACE_DIRECTORY/$1
+  cd $WORKSPACE_DIRECTORY/$1
+}
 
 start-ssh-agent()
 {
