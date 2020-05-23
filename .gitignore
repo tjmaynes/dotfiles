@@ -11,7 +11,7 @@
 # Secrets
 system/.bash_secrets
 
-# VSCode
+# Config
 system/.config/Code/machineid
-
 system/.config/configstore
+system/.config/htop

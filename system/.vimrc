@@ -92,9 +92,10 @@ Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 Plug 'vim-scripts/fountain.vim'
 Plug 'elzr/vim-json'
+Plug 'cespare/vim-toml'
+Plug 'hashivim/vim-terraform'
 
-Plug 'vim-python/python-syntax'
-Plug 'udalov/kotlin-vim'
+Plug 'fatih/vim-go'
 
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
