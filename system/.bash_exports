@@ -73,18 +73,11 @@ k8s_set_token()
 ############################################
 
 alias psx='ps -x'
-alias awake='caffeinate'
-alias xcode-delete-derived-data='rm -rf ~/Library/Developer/Xcode/DerivedData'
+alias create-ssh-key='ssh-keygen -t rsa -b 4096 -C'
 alias gen-pass='openssl rand -base64 25 | tr -d /'
 alias port-usage='sudo lsof -i -P -n | grep LISTEN'
-alias init-git='git init && echo ".DS_Store" > .gitignore && touch README.markdown'
-alias uuid='uuidgen'
-alias gpg-force-restart='gpgconf --kill gpg-agent'
-alias check-disk-space='du -shxc /*'
-alias start-docker='systemctl enable --now docker'
-alias stop-docker='systemctl disable docker'
+alias init-git='git init && echo ".DS_Store" > .gitignore && touch README.md'
 alias switch-to-zsh='chsh -s $(grep /zsh$ /etc/shells | tail -1)'
-alias workie='cd $HOME/workspace/tjmaynes'
 
 clone()
 {
