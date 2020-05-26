@@ -1,0 +1,35 @@
+#+TITLE: w3m Documentation
+Link: http://emacs-w3m.namazu.org
+
+| M-x w3m | Start browsing web with emacs-w3m.                            |
+| q       | Close all emacs-w3m windows, without deleting buffers.        |
+| Q       | Exit browsing web. All emacs-w3m buffers will be deleted.     |
+| RET     | Display the page pointed to by the link under point.          |
+| C-c C-c | Submit the form at point.                                     |
+| R       | Reload the current page.                                      |
+| r       | Redisplay the current page.                                   |
+| TAB     | Move the point to the next anchor.                            |
+| M-TAB   | Move the point to the previous anchor.                        |
+| B       | Move back to the previous page in the history.                |
+| N       | Move forward to the next page in the history.                 |
+| U       | Visit the web page.                                           |
+| H       | Go to the Home page.                                          |
+| M-d     | Download the URL.                                             |
+| d       | Download the URL under point.                                 |
+| \       | Display the html source of the current page.                  |
+| SPC     | Scroll up the current window, or go to the next page.         |
+| b       | Scroll down the current window, or go to the previous page.   |
+| >       | Scroll to the left.                                           |
+| <       | Scroll to the right.                                          |
+| .       | Shift to the left.                                            |
+| ,       | Shift to the right.                                           |
+| M-l     | Recenter horizontally.                                        |
+| j       | Next line.                                                    |
+| k       | Previous line.                                                |
+| l       | Forward char.                                                 |
+| h       | Backward char.                                                |
+| s       | Display the history of pages you have visited in the session. |
+| S       | Prompt for a search query and submit it to google.            |
+| v       | Display the bookmarks list.                                   |
+| a       | Add a url of the current page to a new bookmark.              |
+| M-a     | Add the url under point to a new bookmark.                    |
