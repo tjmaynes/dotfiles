@@ -1,7 +1,18 @@
 #!/bin/bash
 
+if [[ -f "$HOME/.bash_secrets" ]]; then
+  source $HOME/.bash_secrets
+fi
+
+############################################
+##############   Exports   #################
+############################################
+
 export LANG=en_US.UTF-8
 export EDITOR=vi
+export PATH=/usr/local/bin:$PATH
+export HOST="$(hostname -I | awk '{print $1}')"
+export WORKSPACE_DIRECTORY=$HOME/workspace
 
 if [ $TERM = 'dumb' ]; then
   export PS1="\n\w\n\u $ "
@@ -9,9 +20,6 @@ else
   export TERM="xterm-256color"
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
-
-export PATH=/usr/local/bin:$PATH
-export WORKSPACE_DIRECTORY=$HOME/workspace
 
 # Golang
 
@@ -38,6 +46,32 @@ export NVM_DIR="$HOME/.nvm"
 # GPG
 
 export GPG_TTY=$(tty)
+
+############################################
+#############    Aliases   #################
+############################################
+
+alias psx='ps -x'
+alias create-ssh-key='ssh-keygen -t rsa -b 4096 -C'
+alias gen-pass='openssl rand -base64 25 | tr -d /'
+alias port-usage='sudo lsof -i -P -n | grep LISTEN'
+
+############################################
+#################   Git   ##################
+############################################
+
+alias git-init='git init && echo ".DS_Store" > .gitignore && touch README.md'
+
+git-pclone()
+{
+	git-clone tjmaynes/$1
+}
+
+git-clone()
+{
+  git clone git@github.com:$1 $WORKSPACE_DIRECTORY/$1
+  cd $WORKSPACE_DIRECTORY/$1
+}
 
 ############################################
 #############   Kubernetes   ###############
@@ -68,23 +102,6 @@ k8s_set_token()
   echo "$KUBERNETES_TOKEN"
 }
 
-############################################
-#############    Aliases   #################
-############################################
-
-alias psx='ps -x'
-alias create-ssh-key='ssh-keygen -t rsa -b 4096 -C'
-alias gen-pass='openssl rand -base64 25 | tr -d /'
-alias port-usage='sudo lsof -i -P -n | grep LISTEN'
-alias init-git='git init && echo ".DS_Store" > .gitignore && touch README.md'
-alias switch-to-zsh='chsh -s $(grep /zsh$ /etc/shells | tail -1)'
-
-clone()
-{
-  git clone git@github.com:$1 $WORKSPACE_DIRECTORY/$1
-  cd $WORKSPACE_DIRECTORY/$1
-}
-
 start-ssh-agent()
 {
   eval $(ssh-agent -s)
@@ -104,22 +121,4 @@ docker-stop-and-remove-image()
   docker rm   "$(docker ps | grep $1 | awk '{print $1}')"
   docker rmi  "$(docker images | grep $1 | awk '{print $3}')" --force
 }
-
-generate_test_ssl_cert()
-{
-  generate-ssl-cert test "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"
-}
-
-generate-ssl-cert()
-{
-  openssl genrsa -des3 -passout pass:x -out $1.pass.key 2048
-  openssl rsa -passin pass:x -in $1.pass.key -out $1.key
-  rm $1.pass.key
-  openssl req -nodes -newkey rsa:2048 -keyout $1.key -out $1.csr -subj $2
-  openssl x509 -req -sha256 -days 365 -in $1.csr -signkey $1.key -out $1.crt
-}
-
-if [[ -f "$HOME/.bash_secrets" ]]; then
-  source $HOME/.bash_secrets
-fi
 
