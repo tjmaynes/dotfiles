@@ -92,20 +92,23 @@ Plug 'vim-airline/vim-airline-themes'
 
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
+Plug 'ekalinin/Dockerfile.vim'
 Plug 'vim-scripts/fountain.vim'
-Plug 'elzr/vim-json'
 Plug 'cespare/vim-toml'
 Plug 'hashivim/vim-terraform'
 
 Plug 'vim-python/python-syntax'
 
+Plug 'tfnico/vim-gradle'
+Plug 'udalov/kotlin-vim'
+Plug 'artur-shaik/vim-javacomplete2'
+
+Plug 'elzr/vim-json'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'pangloss/vim-javascript'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'isRuslan/vim-es6'
-
-Plug 'ekalinin/Dockerfile.vim'
 
 call plug#end()
 
@@ -143,6 +146,7 @@ autocmd BufNewFile,BufRead *.js, *.html, *.css
 
 let g:jsx_ext_required = 0
 
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 " NERDTree support
 

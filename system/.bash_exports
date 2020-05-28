@@ -57,17 +57,39 @@ alias port-usage='sudo lsof -i -P -n | grep LISTEN'
 #################   Git   ##################
 ############################################
 
-alias git-init='git init && echo ".DS_Store" > .gitignore && touch README.md'
-
 git-pclone()
 {
-	git-clone tjmaynes/$1
+  git-clone tjmaynes/$1
 }
 
 git-clone()
 {
-  git clone git@github.com:$1 $WORKSPACE_DIRECTORY/$1
-  cd $WORKSPACE_DIRECTORY/$1
+  if [[ -z $1 ]]; then
+    echo "Please provide a repository name!";
+  else
+    git clone git@github.com:$1 $WORKSPACE_DIRECTORY/$1
+    cd $WORKSPACE_DIRECTORY/$1
+  fi
+}
+
+############################################
+###############   Spring   #################
+############################################
+
+default-spring-project()
+{
+  if [[ -z $1 ]]; then
+    echo "Please provide a project name!";
+  else
+    mkdir -p $WORKSPACE_DIRECTORY/tjmaynes/$1 || true
+    cd $WORKSPACE_DIRECTORY/tjmaynes/$1
+
+    curl https://start.spring.io/starter.tgz \
+      -d type=gradle-project \
+      -d dependencies=web,h2,data-jpa,data-rest \
+      -d javaVersion=11 \
+      | tar -xzvf -
+  fi
 }
 
 ############################################
