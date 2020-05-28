@@ -12,6 +12,6 @@
 system/.bash_secrets
 
 # Config
-system/.config/Code/machineid
+system/.config/Code
 system/.config/configstore
 system/.config/htop
