@@ -126,20 +126,6 @@
   (require 'paredit)
   (add-hook 'emacs-lisp-mode-hook 'development/emacs-lisp-mode-hook))
 
-(defun development/go-setup ()
-  (package-manager/ensure-packages-installed 'go-mode 'auto-complete)
-  (setenv "GOPATH" (utilities/get-environment-variable "GOPATH"))
-  (add-to-list 'exec-path (utilities/get-environment-variable "GOBIN"))
-  (add-hook 'go-mode-hook '(lambda ()
-			     (setq gofmt-command "goimports")
-			     (add-hook 'before-save-hook 'gofmt-before-save)
-			     (local-set-key (kbd "M-.") 'godef-jump)
-			     (local-set-key (kbd "M-*") 'pop-tag-mark)
-			     (auto-complete-mode 1)
-			     (if (not (string-match "go" compile-command))
-				 (set (make-local-variable 'compile-command)
-				      "go build -v && go test -v && go vet")))))
-
 (defun development/set-exec-path-from-shell-PATH ()
   (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "SHELL" "/bin/zsh")
@@ -155,7 +141,6 @@
   (development/file-setup)
   (development/html-setup)
   (development/emacs-lisp-setup)
-  (development/go-setup)
   (development/shell-setup))
 
 (defun theme/cli-setup ()
