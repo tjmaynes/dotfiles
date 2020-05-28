@@ -21,13 +21,10 @@ else
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
-# Golang
+# SDKMan
 
-export GO111MODULE=on
-export GOPATH=$HOME/workspace/go
-export GOBIN=$HOME/workspace/go/bin
-export PATH=$GOBIN:$PATH
-export PATH=/usr/local/go/bin:$PATH
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # Pyenv
 
