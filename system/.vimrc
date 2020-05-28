@@ -87,6 +87,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'jamessan/vim-gnupg'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
@@ -96,10 +98,11 @@ Plug 'cespare/vim-toml'
 Plug 'hashivim/vim-terraform'
 
 Plug 'vim-python/python-syntax'
-Plug 'fatih/vim-go'
 
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'isRuslan/vim-es6'
 
 Plug 'ekalinin/Dockerfile.vim'
@@ -140,9 +143,6 @@ autocmd BufNewFile,BufRead *.js, *.html, *.css
 
 let g:jsx_ext_required = 0
 
-" Goyo support
-
-map <silent> <leader>g :Goyo<cr>
 
 " NERDTree support
 
@@ -154,10 +154,16 @@ let NERDTreeMinimalUI=1
 map <silent> <leader>d :execute 'NERDTreeToggle ' . getcwd()<cr>
 map <silent> <leader>b :NERDTreeFromBookmark<cr>
 
-" Pretty JSON
 
-command PyJSONPretty execute "%!python -m json.tool"
-nnoremap <leader>j :PyJSONPretty<cr>
+" Vim-Airline
+
+let g:airline_theme = 'zenburn'
+let g:airline_powerline_fonts = 1
+let g:airline_skip_empty_sections = 1
+let g:airline#extensions#tabline#enabled = 0
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
 
 " Syntastic support
 
@@ -172,3 +178,14 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_loc_list_height=5
+
+
+" Goyo support
+
+map <silent> <leader>g :Goyo<cr>
+
+
+" Pretty JSON
+
+command PyJSONPretty execute "%!python -m json.tool"
+nnoremap <leader>j :PyJSONPretty<cr>
