@@ -11,7 +11,6 @@ fi
 export LANG=en_US.UTF-8
 export EDITOR=vi
 export PATH=/usr/local/bin:$PATH
-export HOST="$(hostname -I | awk '{print $1}')"
 export WORKSPACE_DIRECTORY=$HOME/workspace
 
 if [ $TERM = 'dumb' ]; then
@@ -53,16 +52,25 @@ alias create-ssh-key='ssh-keygen -t rsa -b 4096 -C'
 alias gen-pass='openssl rand -base64 25 | tr -d /'
 alias port-usage='sudo lsof -i -P -n | grep LISTEN'
 
+get-ip-address()
+{
+  if [[ -z "$(command -v hostname)" ]]; then
+    echo "Hostname is not installed on machine"
+  else
+    hostname -I | awk '{print $1}'
+  fi
+}
+
 ############################################
 #################   Git   ##################
 ############################################
 
-git-pclone()
+pclone()
 {
-  git-clone tjmaynes/$1
+  clone tjmaynes/$1
 }
 
-git-clone()
+clone()
 {
   if [[ -z $1 ]]; then
     echo "Please provide a repository name!";
