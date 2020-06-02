@@ -74,54 +74,6 @@ nnoremap <C-H> <C-W><C-H>
 "folding
 nnoremap <space> za
 
-
-" Packages
-
-call plug#begin('~/.vim/plugged')
-
-Plug 'jnurmine/Zenburn'
-Plug 'scrooloose/nerdtree'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'scrooloose/syntastic'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'jamessan/vim-gnupg'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-Plug 'tpope/vim-markdown'
-Plug 'junegunn/goyo.vim'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'vim-scripts/fountain.vim'
-Plug 'cespare/vim-toml'
-Plug 'hashivim/vim-terraform'
-
-Plug 'vim-python/python-syntax'
-
-Plug 'tfnico/vim-gradle'
-Plug 'udalov/kotlin-vim'
-Plug 'artur-shaik/vim-javacomplete2'
-
-Plug 'elzr/vim-json'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'pangloss/vim-javascript'
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-Plug 'isRuslan/vim-es6'
-
-call plug#end()
-
-
-" Development
-
-set background=dark
-colorscheme zenburn
-
-filetype indent on
-syntax enable
-
-
 " Language support
 
 autocmd BufNewFile,BufRead .babelrc setf json
@@ -144,9 +96,54 @@ autocmd BufNewFile,BufRead *.js, *.html, *.css
       \ set softtabstop=2 |
       \ set shiftwidth=2
 
+
+" Packages
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'jnurmine/Zenburn'
+Plug 'scrooloose/nerdtree'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'jamessan/vim-gnupg'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+Plug 'ycm-core/YouCompleteMe'
+
+Plug 'tpope/vim-markdown'
+Plug 'junegunn/goyo.vim'
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'vim-scripts/fountain.vim'
+Plug 'cespare/vim-toml'
+Plug 'hashivim/vim-terraform'
+
+Plug 'vim-python/python-syntax'
+
+Plug 'elzr/vim-json'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'pangloss/vim-javascript'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+Plug 'isRuslan/vim-es6'
+
+call plug#end()
+
+
+" Development
+
+set background=dark
+silent! syntax enable
+silent! colorscheme zenburn
+
+filetype indent on
+
+let python_highlight_all = 1
 let g:jsx_ext_required = 0
 
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 " NERDTree support
 
