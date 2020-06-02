@@ -115,6 +115,43 @@ docker-stop-and-remove-image()
 ################   Other   #################
 ############################################
 
+post-install()
+{
+  install_python_package()
+  {
+    if [[ -x "$(command -v $1)" ]]; then
+      echo "$1 already installed..."
+    else
+      echo "Installing $1..."
+      python3 -m pip install --upgrade $1 
+    fi
+  }
+
+  if [[ -x "$(command -v pyenv)" ]]; then
+    if pyenv versions --bare | grep -q "^$PYTHON_VERSION\$"; then
+      echo "Python v$PYTHON_VERSION is already installed..."
+    else
+      pyenv install $PYTHON_VERSION
+    fi
+
+    pyenv global $PYTHON_VERSION
+
+
+    if [[ -d "$HOME/.vim/plugged/YouCompleteMe" ]]; then
+      echo "Installing YouCompleteMe..."
+      pushd $HOME/.vim/plugged/YouCompleteMe
+      python install.py
+      popd
+    fi
+
+    install_python_package pip
+    install_python_package cookiecutter
+    install_python_package jupyter
+  else
+    echo "Pyenv is not installed!"
+  fi
+}
+
 pclone()
 {
   clone tjmaynes/$1
@@ -162,5 +199,4 @@ default-spring-project()
       | tar -xzvf -
   fi
 }
-
 
