@@ -12,6 +12,7 @@ export LANG=en_US.UTF-8
 export EDITOR=vi
 export PATH=/usr/local/bin:$PATH
 export WORKSPACE_DIRECTORY=$HOME/workspace
+export GIT_USERNAME=tjmaynes
 
 if [ $TERM = 'dumb' ]; then
   export PS1="\n\w\n\u $ "
@@ -27,6 +28,7 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 # Pyenv
 
+export PYTHON_VERSION=3.8.0
 export PYTHON_CONFIGURE_OPTS="--enable-shared"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -136,7 +138,6 @@ post-install()
 
     pyenv global $PYTHON_VERSION
 
-
     if [[ -d "$HOME/.vim/plugged/YouCompleteMe" ]]; then
       echo "Installing YouCompleteMe..."
       pushd $HOME/.vim/plugged/YouCompleteMe
@@ -169,8 +170,6 @@ clone()
 
 backup-github-repos()
 {
-  GIT_USERNAME=tjmaynes
-
   REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | python -c "import json, sys; obj=json.load(sys.stdin); lst=[str(obj[i]['name']) for i in range(len(obj))]; print ', '.join(str(p) for p in lst)")
   REPOS=($(echo $REPOS | tr "," "\n"))
 
