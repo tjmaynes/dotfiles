@@ -21,11 +21,6 @@ else
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
-# SDKMan
-
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
 # Pyenv
 
 export PYTHON_VERSION=3.8.0
@@ -36,11 +31,14 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
-# NVM
+# Rbenv
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+export RUBY_VERSION=2.6.6
+export RBENV_ROOT="$HOME/.rbenv"
+export PATH="$RBENV_ROOT/bin:$PATH"
+if command -v rbenv 1>/dev/null 2>&1; then
+  eval "$(rbenv init -)"
+fi
 
 # GPG
 
@@ -129,28 +127,49 @@ post-install()
     fi
   }
 
-  if [[ ! -x "$(command -v pyenv)" ]]; then
-    if pyenv versions --bare | grep -q "^$PYTHON_VERSION\$"; then
-      echo "Python v$PYTHON_VERSION is already installed..."
+  install_python()
+  {
+    if [[ -x "$(command -v pyenv)" ]]; then
+      echo "Pyenv is not installed!"
     else
-      pyenv install $PYTHON_VERSION
+      if pyenv versions --bare | grep -q "^$PYTHON_VERSION\$"; then
+        echo "Python v$PYTHON_VERSION is already installed..."
+      else
+        pyenv install $PYTHON_VERSION
+      fi
+
+      pyenv global $PYTHON_VERSION
+
+      if [[ -d "$HOME/.vim/plugged/YouCompleteMe" ]]; then
+        echo "Installing YouCompleteMe..."
+        pushd $HOME/.vim/plugged/YouCompleteMe
+        python install.py
+        popd
+      fi
+
+      install_python_package pip
+      install_python_package cookiecutter
+      install_python_package jupyter
     fi
+  }
 
-    pyenv global $PYTHON_VERSION
+  install_ruby()
+  {
+    if [[ -x "$(command -v rbenv)" ]]; then
+      echo "Rbenv is not installed!"
+    else
+      if rbenv versions --bare | grep -q "^$RUBY_VERSION\$"; then
+        echo "Ruby v$RUBY_VERSION is already installed..."
+      else
+        rbenv install $RUBY_VERSION
+      fi
 
-    if [[ -d "$HOME/.vim/plugged/YouCompleteMe" ]]; then
-      echo "Installing YouCompleteMe..."
-      pushd $HOME/.vim/plugged/YouCompleteMe
-      python install.py
-      popd
+      rbenv global $RUBY_VERSION
     fi
+  }
 
-    install_python_package pip
-    install_python_package cookiecutter
-    install_python_package jupyter
-  else
-    echo "Pyenv is not installed!"
-  fi
+  install_python
+  install_ruby
 }
 
 pclone()
@@ -181,21 +200,5 @@ backup-github-repos()
     rm -rf $repo
   done
   popd
-}
-
-default-spring-project()
-{
-  if [[ -z $1 ]]; then
-    echo "Please provide a project name!";
-  else
-    mkdir -p $WORKSPACE_DIRECTORY/tjmaynes/$1 || true
-    cd $WORKSPACE_DIRECTORY/tjmaynes/$1
-
-    curl https://start.spring.io/starter.tgz \
-      -d type=gradle-project \
-      -d dependencies=web,h2,data-jpa,data-rest \
-      -d javaVersion=11 \
-      | tar -xzvf -
-  fi
 }
 
