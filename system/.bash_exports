@@ -33,7 +33,7 @@ fi
 
 # Rbenv
 
-export RUBY_VERSION=2.6.6
+export RUBY_VERSION=2.6.5
 export RBENV_ROOT="$HOME/.rbenv"
 export PATH="$RBENV_ROOT/bin:$PATH"
 if command -v rbenv 1>/dev/null 2>&1; then
@@ -153,6 +153,16 @@ post-install()
     fi
   }
 
+  install_ruby_package()
+  {
+    if [[ -x "$(command -v $1)" ]]; then
+      echo "$1 already installed..."
+    else
+      echo "Installing $1..."
+      gem install $1 --no-rdoc --no-ri
+    fi
+  }
+
   install_ruby()
   {
     if [[ -x "$(command -v rbenv)" ]]; then
@@ -165,6 +175,8 @@ post-install()
       fi
 
       rbenv global $RUBY_VERSION
+
+      install_ruby_package bundler
     fi
   }
 
