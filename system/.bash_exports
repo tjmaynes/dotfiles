@@ -21,6 +21,10 @@ else
     export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
+# SDKMan
+
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
 # Pyenv
 
 export PYTHON_VERSION=3.8.0
