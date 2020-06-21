@@ -137,40 +137,24 @@
 (defun development/shell-setup ()
   (when window-system (development/set-exec-path-from-shell-PATH)))
 
-(defun development/clojure-mode-hook ()
-  (paredit-mode +1)
-  (enable-show-paren-mode)
-  (define-key clojure-mode-map (kbd "C-c C-a") 'align-cljlet)
-  (dolist (macro '(fresh conde run run* for-all for-map go go-loop
-			 for> doseq> fn> defn> defprotocol> gen-for))
-    (put-clojure-indent macro 'defun))
-  (clj-refactor-mode 1)
-  (cljr-add-keybindings-with-prefix "C-c C-v")
-  (local-set-key (kbd "RET") 'newline-and-indent))
-
-(defun development/clojure-setup ()
-  (package-manager/ensure-packages-installed 'clojure-mode 'cider 'align-cljlet 'paredit 'clj-refactor)
-  (setq cider-prompt-for-symbol nil)
-  (add-hook 'clojure-mode-hook 'development/clojure-mode-hook)
-  (add-hook 'cider-repl-mode-hook 'paredit-mode))
-
 (defun development/setup ()
   (development/file-setup)
   (development/html-setup)
   (development/emacs-lisp-setup)
-  (development/clojure-setup)
   (development/shell-setup))
 
-(defun theme/cli-setup ()
-  (package-manager/ensure-packages-installed 'zenburn-theme 'telephone-line)
-  (load-theme 'zenburn t)
+(defun theme/gui-setup ()
   (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
       telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
       telephone-line-primary-right-separator 'telephone-line-cubed-right
       telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
   (setq telephone-line-height 24
-      telephone-line-evil-use-short-tag t)
+	telephone-line-evil-use-short-tag t)
   (telephone-line-mode 1))
+
+(defun theme/cli-setup ()
+  (package-manager/ensure-packages-installed 'zenburn-theme 'telephone-line)
+  (load-theme 'zenburn t))
 
 (defun theme/setup (theme-config)
   (let ((initial-message (gethash "initial-message" theme-config))
@@ -192,7 +176,9 @@
     (display-time)
     (menu-bar-mode -1)
     (tool-bar-mode -1)
-    (theme/cli-setup)))
+    (theme/cli-setup)
+    (if (display-graphic-p)
+	(theme/gui-setup))))
 
 (defun writing/org-setup (org-directory)
   (package-manager/ensure-packages-installed 'org)
