@@ -121,6 +121,7 @@ Plug 'vim-scripts/fountain.vim'
 Plug 'cespare/vim-toml'
 Plug 'hashivim/vim-terraform'
 
+Plug 'rust-lang/rust.vim'
 Plug 'vim-python/python-syntax'
 
 Plug 'elzr/vim-json'
