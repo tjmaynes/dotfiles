@@ -1,4 +1,0 @@
-. $HOME/.bash_exports
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-
