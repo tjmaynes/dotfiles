@@ -79,9 +79,6 @@ nnoremap <space> za
 autocmd BufNewFile,BufRead .babelrc setf json
 autocmd BufNewFile,BufRead *.fountain set filetype=fountain
 
-autocmd FileType make
-      \ set noexpandtab
-
 autocmd BufNewFile,BufRead *.py
       \ set tabstop=4 |
       \ set softtabstop=4 |
