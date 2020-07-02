@@ -2,7 +2,7 @@
   "git": {
     "directory": "~/workspace/tjmaynes",
     "repos": [
-      "tjmaynes/tjmaynes.github.io",
+      "tjmaynes/blog",
       "tjmaynes/notebook"
     ]
   },
@@ -11,8 +11,7 @@
     "spellchecker-file": "~/.aspell.en.pws"
   },
   "theme": {
-    "bookmarks-file": "~/.emacs-bookmarks",
-    "initial-message": "Do it fearlessly."
+    "bookmarks-file": "~/.emacs-bookmarks"
   },
   "mail": {
     "directory": "~/workspace/mail",

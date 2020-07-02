@@ -76,7 +76,7 @@
   (global-set-key (kbd "C-c 3") 'w3m-goto-url)
   (global-set-key (kbd "C-c n") 'elfeed)
   (global-set-key (kbd "C-c w") 'w3m-browse-url)
-  (global-set-key (kbd "C-c t") 'eshell)
+  (global-set-key (kbd "C-c t") 'multi-term)
   (global-set-key (kbd "C-c r") 'irc)
   (global-set-key (kbd "C-c e p") 'emms-play-directory)
   (global-set-key (kbd "C-c e <left>") 'emms-previous)
@@ -99,7 +99,7 @@
   (global-set-key (kbd "C-x M-w") 'utilities/pt-pbcopy))
 
 (defun development/file-setup ()
-  (package-manager/ensure-packages-installed 'yaml-mode 'dockerfile-mode 'nix-mode)
+  (package-manager/ensure-packages-installed 'yaml-mode 'dockerfile-mode 'markdown-mode 'k8s-mode)
   (setq mode-require-final-newline t)
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8)
@@ -135,6 +135,7 @@
 	  exec-path (split-string path-from-shell path-separator))))
 
 (defun development/shell-setup ()
+  (package-manager/ensure-packages-installed 'multi-term)
   (when window-system (development/set-exec-path-from-shell-PATH)))
 
 (defun development/setup ()
@@ -144,6 +145,7 @@
   (development/shell-setup))
 
 (defun theme/gui-setup ()
+  (package-manager/ensure-packages-installed 'telephone-line)
   (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
       telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
       telephone-line-primary-right-separator 'telephone-line-cubed-right
@@ -153,15 +155,13 @@
   (telephone-line-mode 1))
 
 (defun theme/cli-setup ()
-  (package-manager/ensure-packages-installed 'zenburn-theme 'telephone-line)
+  (package-manager/ensure-packages-installed 'zenburn-theme)
   (load-theme 'zenburn t))
 
 (defun theme/setup (theme-config)
-  (let ((initial-message (gethash "initial-message" theme-config))
-	(bookmarks-file (gethash "bookmarks-file" theme-config)))
+  (let ((bookmarks-file (gethash "bookmarks-file" theme-config)))
     (setq inhibit-splash-screen t
 	  initial-scratch-message ""
-	  inhibit-startup-echo-area-message initial-message
 	  mac-allow-anti-aliasing t
 	  scroll-step 1000
 	  scroll-conservatively 1000
@@ -170,15 +170,17 @@
 	  ring-bell-function 'ignore
 	  display-time-day-and-date t
 	  bookmark-default-file bookmarks-file
+	  ns-use-proxy-icon nil
+	  frame-title-format nil
 	  default-frame-alist '((font . "Inconsolata for Powerline-16")))
     (ido-mode t)
     (fset 'yes-or-no-p 'y-or-n-p)
     (display-time)
     (menu-bar-mode -1)
     (tool-bar-mode -1)
-    (theme/cli-setup)
     (if (display-graphic-p)
-	(theme/gui-setup))))
+	(theme/gui-setup))
+    (theme/cli-setup)))
 
 (defun writing/org-setup (org-directory)
   (package-manager/ensure-packages-installed 'org)
@@ -231,18 +233,10 @@
   (setq-default TeX-engine 'xetex
 		TeX-PDF-mode t))
 
-(defun writing/screenplay-setup ()
-  (package-manager/ensure-packages-installed 'fountain-mode 'olivetti)
-  (add-hook 'fountain-mode-hook 'olivetti-mode))
-
-(defun writing/extra-tools-setup ()
-  (package-manager/ensure-packages-installed 'markdown-mode))
-
 (defun writing/setup (writing-config)
+  (writing/org-setup (gethash "directory" writing-config))
   (writing/spellchecker-setup (gethash "spellchecker-file" writing-config))
-  (writing/latex-setup)
-  (writing/screenplay-setup)
-  (writing/extra-tools-setup))
+  (writing/latex-setup))
 
 (defun media/music-setup ()
   (package-manager/ensure-packages-installed 'emms)
@@ -255,10 +249,8 @@
 
 (defun media/rss-feed-setup ()
   (package-manager/ensure-packages-installed 'elfeed 'elfeed-web)
-  (setq elfeed-feeds '(("http://nullprogram.com/feed/" development)
-		       ("http://endlessparentheses.com/atom.xml" development)
-		       ("http://www.cinephiliabeyond.org/feed/" filmmaking)
-		       ("http://www.thesimpledollar.com/feed/" lifestyle))
+  (setq elfeed-feeds '(("https://nullprogram.com/feed/" development)
+		       ("https://www.cinephiliabeyond.org/feed/" filmmaking))
 	elfeed-search-filter "-junk @6-months-ago +unread"))
 
 (defun media/ebook-setup ()
@@ -290,11 +282,9 @@
 
 (defun version-control/clone-repo (repo destination)
   (let* ((path (expand-file-name (file-name-nondirectory repo) destination))
-	 (change-directory-command (format "(mkdir -p %s || true) && cd %s" destination destination))
-	 (clone-command (format "git clone git@github.com:%s.git" repo))
-	 (go-to-directory-and-clone-command (concat change-directory-command " && " clone-command)))
+	 (clone-command (format "git clone git@github.com:%s.git %s && cd %s" repo destination destination)))
     (if (not (file-directory-p path))
-	(shell-command go-to-directory-and-clone-command))))
+	(shell-command clone-command))))
 
 (defun version-control/setup (version-control-config)
   (let ((repos (gethash "repos" version-control-config))
