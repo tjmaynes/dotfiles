@@ -170,14 +170,8 @@
   (development/rust-setup))
 
 (defun theme/gui-setup ()
-  (package-manager/ensure-packages-installed 'telephone-line)
-  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
-      telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
-      telephone-line-primary-right-separator 'telephone-line-cubed-right
-      telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
-  (setq telephone-line-height 24
-	telephone-line-evil-use-short-tag t)
-  (telephone-line-mode 1))
+  (package-manager/ensure-packages-installed 'solarized-theme)
+  (load-theme 'solarized-light t))
 
 (defun theme/cli-setup ()
   (package-manager/ensure-packages-installed 'zenburn-theme)
@@ -207,8 +201,8 @@
   (let ((bookmarks-file (gethash "bookmarks-file" theme-config)))
     (theme/default-setup bookmarks-file)
     (if (display-graphic-p)
-	(theme/gui-setup))
-    (theme/cli-setup)))
+	(theme/gui-setup)
+      (theme/cli-setup))))
 
 (defun writing/org-setup (org-directory)
   (package-manager/ensure-packages-installed 'org)
@@ -431,3 +425,17 @@
     (media/setup)))
 
 (initialize)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (solarized-theme zenburn-theme web-mode w3m telephone-line racer olivetti nov nix-mode multi-term magit k8s-mode fountain-mode emms elfeed-web el-get dockerfile-mode company clj-refactor cargo auto-complete align-cljlet))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
