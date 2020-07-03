@@ -114,11 +114,11 @@ Plug 'ycm-core/YouCompleteMe'
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 Plug 'ekalinin/Dockerfile.vim'
-Plug 'vim-scripts/fountain.vim'
-Plug 'cespare/vim-toml'
 Plug 'hashivim/vim-terraform'
 
 Plug 'rust-lang/rust.vim'
+Plug 'cespare/vim-toml'
+
 Plug 'vim-python/python-syntax'
 
 Plug 'elzr/vim-json'
@@ -139,7 +139,6 @@ silent! colorscheme zenburn
 
 filetype indent on
 
-let python_highlight_all = 1
 let g:jsx_ext_required = 0
 
 
