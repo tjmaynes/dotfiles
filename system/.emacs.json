@@ -1,22 +1,22 @@
 {
-  "git": {
-    "directory": "~/workspace/tjmaynes",
-    "repos": [
-      "tjmaynes/blog",
-      "tjmaynes/notebook"
-    ]
-  },
-  "writing": {
-    "directory": "~/workspace/tjmaynes/notebook",
-    "spellchecker-file": "~/.aspell.en.pws"
-  },
-  "theme": {
-    "bookmarks-file": "~/.emacs-bookmarks"
-  },
-  "mail": {
-    "directory": "~/workspace/mail",
-    "auth-credentials-file": "~/.authinfo.gpg",
-    "full-name": "TJ Maynes",
-    "address": "tj@tjmaynes.com"
-  }
+    "git": {
+	"directory": "~/workspace/tjmaynes",
+	"repos": [
+	    "tjmaynes/blog",
+	    "tjmaynes/notebook"
+	]
+    },
+    "writing": {
+	"directory": "~/workspace/tjmaynes/notebook",
+	"spellchecker-file": "~/.aspell.en.pws"
+    },
+    "theme": {
+	"bookmarks-file": "~/.emacs-bookmarks"
+    },
+    "mail": {
+	"directory": "~/workspace/mail",
+	"auth-credentials-file": "~/.authinfo.gpg",
+	"full-name": "TJ Maynes",
+	"address": "tj@tjmaynes.com"
+    }
 }

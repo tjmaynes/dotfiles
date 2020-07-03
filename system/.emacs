@@ -13,6 +13,10 @@
     (if (not value) (error (format "Missing environment variable: %s." env-name)))
     value))
 
+(defun utilities/fail-if-program-does-not-exist (program)
+  (if (not (executable-find program))
+      (error (concat "Program '"program"' not found; please install!"))))
+
 (defun utilities/pt-pbpaste ()
   "Paste data from pasteboard."
   (interactive)
@@ -90,7 +94,6 @@
   (global-set-key (kbd "C-x <right>") 'windmove-right)
   (global-set-key (kbd "C-x <up>") 'windmove-up)
   (global-set-key (kbd "C-x <down>") 'windmove-down)
-  (global-set-key (kbd "C-x C-d") 'insert-journal-date)
   (global-set-key (kbd "C-x C-i") 'indent-region)
   (global-set-key (kbd "C-u") 'undo)
   (global-set-key (kbd "M-]") 'doc-view-next-page)
@@ -116,33 +119,55 @@
 	web-mode-enable-css-colorization t)
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode)))
 
-(defun development/emacs-lisp-mode-hook ()
+(defun development/elisp-mode-hook ()
   (paredit-mode +1)
   (prettify-symbols-mode +1)
   (show-paren-mode +1))
 
-(defun development/emacs-lisp-setup ()
+(defun development/elisp-setup ()
   (package-manager/ensure-packages-installed 'paredit)
   (require 'paredit)
-  (add-hook 'emacs-lisp-mode-hook 'development/emacs-lisp-mode-hook))
+  (add-hook 'emacs-lisp-mode-hook 'development/elisp-mode-hook))
+
+(defun development/rust-mode-hook ()
+  (require 'rust-mode)
+  (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common))
+
+(defun development/rust-setup ()
+  (package-manager/ensure-packages-installed 'rust-mode 'racer 'company 'cargo)
+  (utilities/fail-if-program-does-not-exist "racer")
+  (setq tab-width 2
+	indent-tabs-mode nil
+	company-tooltip-align-annotations t
+	rust-format-on-save t
+	racer-cmd (concat (getenv "HOME") "/.cargo/bin/racer"))
+  (add-hook 'rust-mode-hook 'development/rust-mode-hook)
+  (add-hook 'rust-mode-hook #'racer-mode)  
+  (add-hook 'rust-mode-hook 'cargo-minor-mode)
+  (add-hook 'racer-mode-hook #'eldoc-mode)
+  (add-hook 'racer-mode-hook #'company-mode))
 
 (defun development/set-exec-path-from-shell-PATH ()
-  (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+  (let ((path-from-shell
+	 (replace-regexp-in-string "[ \t\n]*$" ""
+				   (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "SHELL" "/bin/zsh")
     (setenv "PATH" path-from-shell)
     (setq exec-path (append exec-path '("/usr/local/bin"))
 	  eshell-path-env path-from-shell
 	  exec-path (split-string path-from-shell path-separator))))
 
-(defun development/shell-setup ()
-  (package-manager/ensure-packages-installed 'multi-term)
-  (when window-system (development/set-exec-path-from-shell-PATH)))
+(defun development/general-setup ()
+  (package-manager/ensure-packages-installed 'multi-term 'auto-complete)
+  (ac-config-default))
 
 (defun development/setup ()
+  (development/set-exec-path-from-shell-PATH)
+  (development/general-setup)
   (development/file-setup)
   (development/html-setup)
-  (development/emacs-lisp-setup)
-  (development/shell-setup))
+  (development/elisp-setup)
+  (development/rust-setup))
 
 (defun theme/gui-setup ()
   (package-manager/ensure-packages-installed 'telephone-line)
@@ -158,10 +183,9 @@
   (package-manager/ensure-packages-installed 'zenburn-theme)
   (load-theme 'zenburn t))
 
-(defun theme/setup (theme-config)
-  (let ((bookmarks-file (gethash "bookmarks-file" theme-config)))
-    (setq inhibit-splash-screen t
-	  initial-scratch-message ""
+(defun theme/default-setup (bookmarks-file)
+  (setq inhibit-splash-screen t
+	initial-scratch-message ""
 	  mac-allow-anti-aliasing t
 	  scroll-step 1000
 	  scroll-conservatively 1000
@@ -173,11 +197,15 @@
 	  ns-use-proxy-icon nil
 	  frame-title-format nil
 	  default-frame-alist '((font . "Inconsolata for Powerline-16")))
-    (ido-mode t)
-    (fset 'yes-or-no-p 'y-or-n-p)
-    (display-time)
-    (menu-bar-mode -1)
-    (tool-bar-mode -1)
+  (ido-mode t)
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (display-time)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1))
+
+(defun theme/setup (theme-config)
+  (let ((bookmarks-file (gethash "bookmarks-file" theme-config)))
+    (theme/default-setup bookmarks-file)
     (if (display-graphic-p)
 	(theme/gui-setup))
     (theme/cli-setup)))
@@ -237,6 +265,30 @@
   (writing/org-setup (gethash "directory" writing-config))
   (writing/spellchecker-setup (gethash "spellchecker-file" writing-config))
   (writing/latex-setup))
+
+(defun chat/connect (password)
+  (package-manager/ensure-packages-installed 'erc)
+  (let* ((config (utilities/read-json-file "~/.emacs.json"))
+	 (chat-config (gethash "chat" config))
+	 (chat-directory (gethash "directory" chat-config))
+	 (rooms (gethash "rooms" chat-config))
+	 (server (gethash "server" chat-config))
+	 (port (gethash "port" chat-config))
+	 (nickname (gethash "nickname" chat-config))
+	 (fullname (gethash "fullname" chat-config))
+	 (userid (gethash "userid" chat-config)))
+	(setq erc-enable-logging t
+	      erc-kill-buffer-on-part t
+	      erc-log-channels-directory chat-directory
+	      erc-save-buffer-on-part nil
+	      erc-save-queries-on-quit nil
+	      erc-log-write-after-send t
+	      erc-log-write-after-insert t
+	      erc-autojoin-channels-alist rooms)
+	(erc-fill-mode t)
+	(erc-scrolltobottom-mode t)
+	(erc-tls :server server :port port :password password
+		 :nick nickname :full-name fullname)))
 
 (defun media/music-setup ()
   (package-manager/ensure-packages-installed 'emms)
@@ -365,6 +417,7 @@
 	 (writing-config (gethash "writing" config))
 	 (git-config (gethash "git" config))
 	 (mail-config (gethash "mail" config))
+	 (chat-config (gethash "chat" config))
 	 (theme-config (gethash "theme" config)))
     (package-manager/setup)
     (version-control/setup git-config)
