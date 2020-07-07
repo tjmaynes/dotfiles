@@ -8,6 +8,14 @@
       (write-region "" nil file-location))
     file-location))
 
+(defun utilities/ensure-program-installed (program)
+  (if (not (executable-find program))
+      (error (format "Please install missing program: %s" program))))
+
+(defun utilities/ensure-programs-installed (&rest programs)
+  (dolist (program programs)
+    (utilities/ensure-program-installed (symbol-name program))))
+
 (defun utilities/get-environment-variable (env-name)
   (let ((value (getenv env-name)))
     (if (not value) (error (format "Missing environment variable: %s." env-name)))
@@ -102,8 +110,7 @@
   (global-set-key (kbd "C-x M-w") 'utilities/pt-pbcopy))
 
 (defun development/file-setup ()
-  (package-manager/ensure-packages-installed 'json-mode 'yaml-mode 'dockerfile-mode 'markdown-mode 'k8s-mode
-   )
+  (package-manager/ensure-packages-installed 'json-mode 'yaml-mode 'markdown-mode)
   (setq mode-require-final-newline t)
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8)
@@ -136,7 +143,7 @@
 
 (defun development/rust-setup ()
   (package-manager/ensure-packages-installed 'rust-mode 'racer 'company 'cargo)
-  (utilities/fail-if-program-does-not-exist "racer")
+  (utilities/ensure-programs-installed 'racer)
   (setq tab-width 2
 	indent-tabs-mode nil
 	company-tooltip-align-annotations t
@@ -147,6 +154,9 @@
   (add-hook 'rust-mode-hook 'cargo-minor-mode)
   (add-hook 'racer-mode-hook #'eldoc-mode)
   (add-hook 'racer-mode-hook #'company-mode))
+
+(defun development/devops-setup ()
+  (package-manager/ensure-packages-installed 'dockerfile-mode 'k8s-mode))
 
 (defun development/set-exec-path-from-shell-PATH ()
   (let ((path-from-shell
@@ -163,12 +173,12 @@
   (ac-config-default))
 
 (defun development/setup ()
-  (development/set-exec-path-from-shell-PATH)
   (development/general-setup)
   (development/file-setup)
   (development/html-setup)
   (development/elisp-setup)
-  (development/rust-setup))
+  (development/rust-setup)
+  (development/devops-setup))
 
 (defun theme/gui-setup ()
   (package-manager/ensure-packages-installed 'solarized-theme)
@@ -181,17 +191,17 @@
 (defun theme/default-setup (bookmarks-file)
   (setq inhibit-splash-screen t
 	initial-scratch-message ""
-	  mac-allow-anti-aliasing t
-	  scroll-step 1000
-	  scroll-conservatively 1000
-	  redisplay-dont-pause t
-	  scroll-preserve-screen-position 1
-	  ring-bell-function 'ignore
-	  display-time-day-and-date t
-	  bookmark-default-file bookmarks-file
-	  ns-use-proxy-icon nil
-	  frame-title-format nil
-	  default-frame-alist '((font . "Inconsolata for Powerline-16")))
+	mac-allow-anti-aliasing t
+	scroll-step 1000
+	scroll-conservatively 1000
+	redisplay-dont-pause t
+	scroll-preserve-screen-position 1
+	ring-bell-function 'ignore
+	display-time-day-and-date t
+	bookmark-default-file bookmarks-file
+	ns-use-proxy-icon nil
+	frame-title-format nil
+	default-frame-alist '((font . "Inconsolata for Powerline-16")))
   (ido-mode t)
   (fset 'yes-or-no-p 'y-or-n-p)
   (display-time)
@@ -205,8 +215,32 @@
 	(theme/gui-setup)
       (theme/cli-setup))))
 
+(defun chat/connect (password)
+  (package-manager/ensure-packages-installed 'erc)
+  (let* ((config (utilities/read-json-file "~/.emacs.json"))
+	 (chat-config (gethash "chat" config))
+	 (chat-directory (gethash "directory" chat-config))
+	 (rooms (gethash "rooms" chat-config))
+	 (server (gethash "server" chat-config))
+	 (port (gethash "port" chat-config))
+	 (nickname (gethash "nickname" chat-config))
+	 (fullname (gethash "fullname" chat-config))
+	 (userid (gethash "userid" chat-config)))
+    (setq erc-enable-logging t
+	  erc-kill-buffer-on-part t
+	  erc-log-channels-directory chat-directory
+	  erc-save-buffer-on-part nil
+	  erc-save-queries-on-quit nil
+	  erc-log-write-after-send t
+	  erc-log-write-after-insert t
+	  erc-autojoin-channels-alist rooms)
+    (erc-fill-mode t)
+    (erc-scrolltobottom-mode t)
+    (erc-tls :server server :port port :password password
+	     :nick nickname :full-name fullname)))
+
 (defun writing/org-setup (org-directory)
-  (package-manager/ensure-packages-installed 'org)
+  (package-manager/ensure-packages-installed 'org 'org-journal)
   (let* ((org-agenda-file (utilities/ensure-file-location-exists org-directory "inbox.org")))
     (setq initial-major-mode 'org-mode
 	  org-directory org-directory
@@ -261,43 +295,25 @@
   (writing/spellchecker-setup (gethash "spellchecker-file" writing-config))
   (writing/latex-setup))
 
-(defun chat/connect (password)
-  (package-manager/ensure-packages-installed 'erc)
-  (let* ((config (utilities/read-json-file "~/.emacs.json"))
-	 (chat-config (gethash "chat" config))
-	 (chat-directory (gethash "directory" chat-config))
-	 (rooms (gethash "rooms" chat-config))
-	 (server (gethash "server" chat-config))
-	 (port (gethash "port" chat-config))
-	 (nickname (gethash "nickname" chat-config))
-	 (fullname (gethash "fullname" chat-config))
-	 (userid (gethash "userid" chat-config)))
-	(setq erc-enable-logging t
-	      erc-kill-buffer-on-part t
-	      erc-log-channels-directory chat-directory
-	      erc-save-buffer-on-part nil
-	      erc-save-queries-on-quit nil
-	      erc-log-write-after-send t
-	      erc-log-write-after-insert t
-	      erc-autojoin-channels-alist rooms)
-	(erc-fill-mode t)
-	(erc-scrolltobottom-mode t)
-	(erc-tls :server server :port port :password password
-		 :nick nickname :full-name fullname)))
-
 (defun media/music-setup ()
   (package-manager/ensure-packages-installed 'emms)
   (setq emms-player-list '(emms-player-mpv)
-	  emms-info-asynchronously t
-	  emms-show-format "♪ %s"
-	  emms-playlist-default-major-mode 'emms-playlist-mode)
+	emms-info-asynchronously t
+	emms-show-format "♪ %s"
+	emms-playlist-default-major-mode 'emms-playlist-mode)
   (emms-standard)
   (emms-default-players))
 
 (defun media/rss-feed-setup ()
   (package-manager/ensure-packages-installed 'elfeed 'elfeed-web)
-  (setq elfeed-feeds '(("https://nullprogram.com/feed/" development)
-		       ("https://www.cinephiliabeyond.org/feed/" filmmaking))
+  (setq elfeed-feeds '(("https://nullprogram.com/feed/" emacs)
+		       ("https://www.cinephiliabeyond.org/feed/" filmmaking)
+		       ("https://kubernetes.io/feed.xml" kubernetes)
+		       ("https://blog.rust-lang.org/feed.xml" rust)
+		       ("https://sachachua.com/blog/category/emacs/feed" emacs)
+		       ("https://blog.printf.net/feed/" decentralized)
+		       ("https://emacs.cafe/feed.xml" emacs)
+		       ("https://endlessparentheses.com/atom-planet.xml" emacs))
 	elfeed-search-filter "-junk @6-months-ago +unread"))
 
 (defun media/ebook-setup ()
@@ -329,7 +345,7 @@
 
 (defun version-control/clone-repo (repo destination)
   (let* ((path (expand-file-name (file-name-nondirectory repo) destination))
-	 (clone-command (format "git clone git@github.com:%s.git %s && cd %s" repo destination destination)))
+	 (clone-command (format "git clone git@github.com:%s.git %s && cd %s" repo path path)))
     (if (not (file-directory-p path))
 	(shell-command clone-command))))
 
@@ -376,44 +392,41 @@
     (add-hook 'gnus-group-mode-hook 'mail/gnus-group-mode-hook)))
 
 (defun mail/gnus-mailbox-setup (mail-config)
-  (let ((mail-directory (gethash "directory" mail-config))
-	(address (gethash "address" mail-config))
-	(full-name (gethash "full-name" mail-config))
-	(provider (gethash "provider" mail-config))
-	(auth-credentials-file (gethash "auth-credentials-file" mail-config)))
+  (let* ((mail-directory (gethash "directory" mail-config))
+	 (address (gethash "address" mail-config))
+	 (full-name (gethash "full-name" mail-config)))
     (setq gnus-directory mail-directory
 	  message-directory mail-directory
 	  nnfolder-directory mail-directory
 	  user-mail-address address
 	  user-full-name full-name
 	  signature-file "~/.signature"
-	  gnus-select-method '(nnimap "tjmaynes"
-	  			      (nnimap-address "imap.fastmail.com")
+	  gnus-select-method '(nnimap "personal"
+	  			      (nnimap-address "mail.messagingengine.com")
 	  			      (nnimap-server-port 993)
 	  			      (nnimap-stream ssl)
 	  			      (nnir-search-engine imap)
-	  			      (nnimap-authinfo-file auth-credentials-file)
 	  			      (nnmail-expiry-wait 90))
 	  message-send-mail-function 'smtpmail-send-it
-	  smtpmail-starttls-credentials '(("smtp.fastmail.com" 587 nil nil))
-	  smtpmail-auth-credentials auth-credentials-file
-	  epa-file-cache-passphrase-for-symmetric-encryption t
-	  smtpmail-default-smtp-server "smtp.fastmail.com"
-	  smtpmail-smtp-server "smtp.fastmail.com"
-	  smtpmail-smtp-service 587
-	  smtpmail-local-domain provider)))
+	  smtpmail-starttls-credentials '(("smtps-proxy.messagingengine.com" 80 nil nil))
+	  smtpmail-auth-credentials '(("smtps-proxy.messagingengine.com" 80 nil nil))
+	  smtpmail-default-smtp-server "smtps-proxy.messagingengine.com"
+	  smtpmail-smtp-server "smtps-proxy.messagingengine.com"
+	  smtpmail-smtp-service 80
+	  smtpmail-stream-type 'tls)))
 
 (defun mail/setup (mail-config)
-    (mail/gnus-view-setup mail-config)
-    (mail/gnus-mailbox-setup mail-config))
+  (mail/gnus-view-setup mail-config)
+  (mail/gnus-mailbox-setup mail-config))
 
-(defun initialize ()
-  (let* ((config (utilities/read-json-file "~/.emacs.json"))
-	 (writing-config (gethash "writing" config))
+(defun initialize (config)
+  (let* ((writing-config (gethash "writing" config))
 	 (git-config (gethash "git" config))
 	 (mail-config (gethash "mail" config))
 	 (chat-config (gethash "chat" config))
 	 (theme-config (gethash "theme" config)))
+    (development/set-exec-path-from-shell-PATH)
+    (utilities/ensure-programs-installed 'xelatex 'offlineimap)
     (package-manager/setup)
     (version-control/setup git-config)
     (key-bindings/setup)
@@ -425,4 +438,4 @@
     (mail/setup mail-config)
     (media/setup)))
 
-(initialize)
+(initialize (utilities/read-json-file "~/.emacs.json"))

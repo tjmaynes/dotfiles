@@ -1,9 +1,10 @@
 {
     "git": {
-	"directory": "~/workspace/tjmaynes",
+	"directory": "~/workspace",
 	"repos": [
 	    "tjmaynes/blog",
-	    "tjmaynes/notebook"
+	    "tjmaynes/notebook",
+	    "tjmaynes/career"
 	]
     },
     "writing": {
@@ -14,9 +15,10 @@
 	"bookmarks-file": "~/.emacs-bookmarks"
     },
     "mail": {
-	"directory": "~/workspace/mail",
+	"directory": "~/workspace/tjmaynes/mail",
 	"auth-credentials-file": "~/.authinfo.gpg",
 	"full-name": "TJ Maynes",
-	"address": "tj@tjmaynes.com"
+	"address": "tj@tjmaynes.com",
+	"provider": "fastmail.com"
     }
 }
