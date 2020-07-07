@@ -102,7 +102,8 @@
   (global-set-key (kbd "C-x M-w") 'utilities/pt-pbcopy))
 
 (defun development/file-setup ()
-  (package-manager/ensure-packages-installed 'yaml-mode 'dockerfile-mode 'markdown-mode 'k8s-mode)
+  (package-manager/ensure-packages-installed 'json-mode 'yaml-mode 'dockerfile-mode 'markdown-mode 'k8s-mode
+   )
   (setq mode-require-final-newline t)
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8)
@@ -425,17 +426,3 @@
     (media/setup)))
 
 (initialize)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (solarized-theme zenburn-theme web-mode w3m telephone-line racer olivetti nov nix-mode multi-term magit k8s-mode fountain-mode emms elfeed-web el-get dockerfile-mode company clj-refactor cargo auto-complete align-cljlet))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
