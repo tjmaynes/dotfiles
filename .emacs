@@ -306,15 +306,15 @@
 
 (defun media/rss-feed-setup ()
   (package-manager/ensure-packages-installed 'elfeed 'elfeed-web)
-  (setq elfeed-feeds '(("https://nullprogram.com/feed/" emacs)
+  (setq elfeed-search-filter "-junk @6-months-ago +unread"
+	elfeed-feeds '(("https://nullprogram.com/feed/" emacs)
 		       ("https://www.cinephiliabeyond.org/feed/" filmmaking)
 		       ("https://kubernetes.io/feed.xml" kubernetes)
 		       ("https://blog.rust-lang.org/feed.xml" rust)
 		       ("https://sachachua.com/blog/category/emacs/feed" emacs)
 		       ("https://blog.printf.net/feed/" decentralized)
 		       ("https://emacs.cafe/feed.xml" emacs)
-		       ("https://endlessparentheses.com/atom-planet.xml" emacs))
-	elfeed-search-filter "-junk @6-months-ago +unread"))
+		       ("https://endlessparentheses.com/atom-planet.xml" emacs))))
 
 (defun media/ebook-setup ()
   (package-manager/ensure-packages-installed 'nov)
@@ -344,7 +344,7 @@
 	browse-url-browser-function 'w3m-goto-url-new-session))
 
 (defun version-control/clone-repo (repo destination)
-  (let* ((path (expand-file-name (file-name-nondirectory repo) destination))
+  (let* ((path (expand-file-name destination repo))
 	 (clone-command (format "git clone git@github.com:%s.git %s && cd %s" repo path path)))
     (if (not (file-directory-p path))
 	(shell-command clone-command))))
@@ -402,16 +402,16 @@
 	  user-full-name full-name
 	  signature-file "~/.signature"
 	  gnus-select-method '(nnimap "personal"
-	  			      (nnimap-address "mail.messagingengine.com")
+	  			      (nnimap-address "imap.fastmail.com")
 	  			      (nnimap-server-port 993)
 	  			      (nnimap-stream ssl)
 	  			      (nnir-search-engine imap)
 	  			      (nnmail-expiry-wait 90))
 	  message-send-mail-function 'smtpmail-send-it
-	  smtpmail-starttls-credentials '(("smtps-proxy.messagingengine.com" 80 nil nil))
-	  smtpmail-auth-credentials '(("smtps-proxy.messagingengine.com" 80 nil nil))
-	  smtpmail-default-smtp-server "smtps-proxy.messagingengine.com"
-	  smtpmail-smtp-server "smtps-proxy.messagingengine.com"
+	  smtpmail-starttls-credentials '(("smtp.fastmail.com" 80 nil nil))
+	  smtpmail-auth-credentials '(("smtp.fastmail.com" 80 nil nil))
+	  smtpmail-default-smtp-server "smtp.fastmail.com"
+	  smtpmail-smtp-server "smtp.fastmail.com"
 	  smtpmail-smtp-service 80
 	  smtpmail-stream-type 'tls)))
 
