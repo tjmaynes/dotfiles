@@ -344,7 +344,7 @@
 	browse-url-browser-function 'w3m-goto-url-new-session))
 
 (defun version-control/clone-repo (repo destination)
-  (let* ((path (expand-file-name destination repo))
+  (let* ((path (concat destination "/" repo))
 	 (clone-command (format "git clone git@github.com:%s.git %s && cd %s" repo path path)))
     (if (not (file-directory-p path))
 	(shell-command clone-command))))
