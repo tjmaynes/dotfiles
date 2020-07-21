@@ -19,10 +19,6 @@ else
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
-## Rust
-
-export PATH="$HOME/.cargo/bin:$PATH"
-
 # Pyenv
 
 export PYTHON_VERSION=3.8.0
@@ -32,6 +28,19 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
+
+# Rbenv
+
+export RUBY_VERSION=2.6.5
+export RBENV_ROOT="$HOME/.rbenv"
+export PATH="$RBENV_ROOT/bin:$PATH"
+if command -v rbenv 1>/dev/null 2>&1; then
+  eval "$(rbenv init -)"
+fi
+
+# iOS
+
+XCODE_VERSION=11.6
 
 # GPG
 
@@ -101,6 +110,69 @@ docker-stop-and-remove-image()
 ############################################
 ################   Other   #################
 ############################################
+
+post-install()
+{
+
+  install_python_package()
+  {
+    if [[ -x "$(command -v $1)" ]]; then
+      echo "$1 already installed..."
+    else
+      echo "Installing $1..."
+      python3 -m pip install --upgrade $1
+    fi
+  }
+
+install_python()
+{
+  if [[ -x "$(command -v pyenv)" ]]; then
+    echo "Pyenv is not installed!"
+  else
+    if pyenv versions --bare | grep -q "^$PYTHON_VERSION\$"; then
+      echo "Python v$PYTHON_VERSION is already installed..."
+    else
+      pyenv install $PYTHON_VERSION
+    fi
+    pyenv global $PYTHON_VERSION
+
+    install_python_package pip
+    install_python_package cookiecutter
+    install_python_package jupyter
+  fi
+}
+
+install_ruby_package()
+{
+  if [[ -x "$(command -v $1)" ]]; then
+    echo "$1 already installed..."
+  else
+    echo "Installing $1..."
+    gem install $1
+  fi
+}
+
+install_ruby()
+{
+  if [[ -x "$(command -v rbenv)" ]]; then
+    echo "Rbenv is not installed!"
+  else
+    if rbenv versions --bare | grep -q "^$RUBY_VERSION\$"; then
+      echo "Ruby v$RUBY_VERSION is already installed..."
+    else
+      rbenv install $RUBY_VERSION
+    fi
+
+    rbenv global $RUBY_VERSION
+
+    install_ruby_package bundler
+    install_ruby_package xcode-install
+  fi
+}
+
+install_python
+install_ruby
+}
 
 pclone()
 {

@@ -109,15 +109,10 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-Plug 'ycm-core/YouCompleteMe'
-
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'hashivim/vim-terraform'
-
-Plug 'rust-lang/rust.vim'
-Plug 'cespare/vim-toml'
 
 Plug 'vim-python/python-syntax'
 
