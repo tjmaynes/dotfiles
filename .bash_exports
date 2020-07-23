@@ -19,6 +19,10 @@ else
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
+# Rust
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # Pyenv
 
 export PYTHON_VERSION=3.8.0
