@@ -209,3 +209,24 @@ backup-github-repos()
   done
   popd
 }
+
+check_program_installed()
+{
+  if [[ ! -x "$(command -v $1)" ]]; then
+    echo "Attempting to install program $1"
+    sudo dnf install -y $1
+  fi
+}
+
+adjust_brightness()
+{
+  check_program_installed "xrandr"
+
+  SCREEN_OUTPUT=$(xrandr -q | grep ' connected' | head -n 1 | cut -d ' ' -f1)
+
+  BRIGHTNESS=$1; DEFAULT_BRIGHTNESS=0.6
+  [[ -x $BRIGHTNESS ]] && BRIGHTNESS=$DEFAULT_BRIGHTNESS
+
+  echo "Adjusting brightness level to $BRIGHTNESS"
+  xrandr --output $SCREEN_OUTPUT --brightness $BRIGHTNESS
+}
