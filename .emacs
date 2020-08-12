@@ -181,8 +181,10 @@
   (development/devops-setup))
 
 (defun theme/gui-setup ()
-  (package-manager/ensure-packages-installed 'solarized-theme)
-  (load-theme 'solarized-light t))
+  (package-manager/ensure-packages-installed 'circadian 'solarized-theme)
+  (setq circadian-themes '(("8:00" . solarized-light)
+			   ("19:30" . solarized-dark)))
+  (circadian-setup))
 
 (defun theme/cli-setup ()
   (package-manager/ensure-packages-installed 'zenburn-theme)
@@ -286,6 +288,7 @@
   (add-to-list 'ispell-skip-region-alist '("#\\+begin_quote" . "#\\+end_quote")))
 
 (defun writing/latex-setup ()
+  (utilities/ensure-programs-installed 'xelatex)
   (setq latex-run-command "xelatex")
   (setq-default TeX-engine 'xetex
 		TeX-PDF-mode t))
@@ -296,6 +299,7 @@
   (writing/latex-setup))
 
 (defun media/music-setup ()
+  (utilities/ensure-programs-installed 'mpv)
   (package-manager/ensure-packages-installed 'emms)
   (setq emms-player-list '(emms-player-mpv)
 	emms-info-asynchronously t
@@ -416,6 +420,7 @@
 	  smtpmail-stream-type 'tls)))
 
 (defun mail/setup (mail-config)
+  (utilities/ensure-programs-installed 'offlineimap)
   (mail/gnus-view-setup mail-config)
   (mail/gnus-mailbox-setup mail-config))
 
@@ -426,7 +431,6 @@
 	 (chat-config (gethash "chat" config))
 	 (theme-config (gethash "theme" config)))
     (development/set-exec-path-from-shell-PATH)
-    (utilities/ensure-programs-installed 'xelatex 'offlineimap)
     (package-manager/setup)
     (version-control/setup git-config)
     (key-bindings/setup)
