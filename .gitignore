@@ -9,10 +9,10 @@
 *.log
 
 # Secrets
-system/.bash_secrets
+.bash_secrets
 
 # Config
-system/.config/Code
-system/.config/configstore
-system/.config/htop
-system/.config/systemd
+.config/Code
+.config/configstore
+.config/htop
+.config/systemd
