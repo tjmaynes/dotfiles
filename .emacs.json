@@ -7,6 +7,11 @@
 	    "tjmaynes/career"
 	]
     },
+    "media": {
+	"music": {
+	    "directory": "~/syncbox/music"
+	}
+    },
     "writing": {
 	"directory": "~/workspace/tjmaynes/notebook",
 	"spellchecker-file": "~/.aspell.en.pws"
@@ -15,10 +20,7 @@
 	"bookmarks-file": "~/.emacs-bookmarks"
     },
     "mail": {
-	"directory": "~/workspace/tjmaynes/mail",
-	"auth-credentials-file": "~/.authinfo.gpg",
 	"full-name": "TJ Maynes",
-	"address": "tj@tjmaynes.com",
-	"provider": "fastmail.com"
+	"address": "tj@tjmaynes.com"
     }
 }

@@ -82,7 +82,7 @@
 	version-control t))
 
 (defun key-bindings/setup ()
-  (global-set-key (kbd "C-c m") 'gnus)
+  (global-set-key (kbd "C-c m") 'mu4e)
   (global-set-key (kbd "C-c g") 'magit-status)
   (global-set-key (kbd "C-c p") 'package-list-packages)
   (global-set-key (kbd "C-c 3") 'w3m-goto-url)
@@ -298,10 +298,11 @@
   (writing/spellchecker-setup (gethash "spellchecker-file" writing-config))
   (writing/latex-setup))
 
-(defun media/music-setup ()
+(defun media/music-setup (music-config)
   (utilities/ensure-programs-installed 'mpv)
   (package-manager/ensure-packages-installed 'emms)
-  (setq emms-player-list '(emms-player-mpv)
+  (setq emms-source-file-default-directory (gethash "directory" music-config)
+   emms-player-list '(emms-player-mpv)
 	emms-info-asynchronously t
 	emms-show-format "♪ %s"
 	emms-playlist-default-major-mode 'emms-playlist-mode)
@@ -332,8 +333,8 @@
   (add-hook 'nov-mode-hook 'visual-line-mode)
   (add-hook 'nov-mode-hook 'visual-fill-column-mode))
 
-(defun media/setup ()
-  (media/music-setup)
+(defun media/setup (media-config)
+  (media/music-setup (gethash "music" media-config))
   (media/rss-feed-setup)
   (media/ebook-setup))
 
@@ -359,75 +360,39 @@
     (require 'seq)
     (seq-map '(lambda (repo) (version-control/clone-repo repo directory)) repos)))
 
-(defun mail/gnus-group-list-subscribed-groups ()
-  (interactive)
-  (gnus-group-list-all-groups))
-
-(defun mail/gnus-group-mode-hook ()
-  (local-set-key "o" 'mail/gnus-group-list-subscribed-groups))
-
-(defun mail/gnus-view-setup (mail-config)
-  (let ((full-name (gethash "full-name" mail-config))
-	(address (gethash "address" mail-config)))
-    (setq gnus-use-correct-string-widths nil
-	  gnus-large-newsgroup 50000
-	  gnus-read-active-file 'some
-	  gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
-	  gnus-thread-hide-subtree t
-	  gnus-thread-ignore-subject t
-	  gnus-thread-sort-functions '((not gnus-thread-sort-by-date)
-				       (not gnus-thread-sort-by-number))
-	  gnus-ignored-newsgroups "^to\\.\\|^[0-9.  ]+\\( \\|$\\)\\|^[\"]\"[#'()]"
-	  gnus-posting-styles '((".*"
-				 (name full-name
-				       (address address))))
-	  mm-text-html-renderer 'w3m
-	  mm-w3m-safe-url-regexp nil)
-    (setq-default gnus-summary-line-format "%U%R%z %(%&user-date;  %-15,15f  %B%s%)\n"
-		  gnus-user-date-format-alist '((t . "%Y-%m-%d %H:%M"))
-		  gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
-		  gnus-sum-thread-tree-false-root ""
-		  gnus-sum-thread-tree-indent ""
-		  gnus-sum-thread-tree-leaf-with-other "-> "
-		  gnus-sum-thread-tree-root ""
-		  gnus-sum-thread-tree-single-leaf "|_ "
-		  gnus-sum-thread-tree-vertical "|")
-    (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-    (add-hook 'gnus-group-mode-hook 'mail/gnus-group-mode-hook)))
-
-(defun mail/gnus-mailbox-setup (mail-config)
-  (let* ((mail-directory (gethash "directory" mail-config))
-	 (address (gethash "address" mail-config))
+(defun mail/setup (mail-config)
+  (utilities/ensure-programs-installed 'offlineimap 'mu)
+  (let* ((address (gethash "address" mail-config))
 	 (full-name (gethash "full-name" mail-config)))
-    (setq gnus-directory mail-directory
-	  message-directory mail-directory
-	  nnfolder-directory mail-directory
-	  user-mail-address address
+    (require 'mu4e)
+    (require 'smtpmail)
+    (setq user-mail-address address
 	  user-full-name full-name
 	  signature-file "~/.signature"
-	  gnus-select-method '(nnimap "personal"
-	  			      (nnimap-address "imap.fastmail.com")
-	  			      (nnimap-server-port 993)
-	  			      (nnimap-stream ssl)
-	  			      (nnir-search-engine imap)
-	  			      (nnmail-expiry-wait 90))
+	  mail-user-agent 'mu4e-user-agent
+	  mu4e-get-mail-command "offlineimap"
+	  mu4e-drafts-folder "/Drafts"
+	  mu4e-sent-folder   "/Sent"
+	  mu4e-trash-folder  "/Trash"
+	  mu4e-sent-messages-behavior 'delete
+	  mu4e-maildir-shortcuts
+	  '( (:maildir "/INBOX"    :key ?i)
+	     (:maildir "/Sent"     :key ?s)
+	     (:maildir "/Trash"    :key ?t))
 	  message-send-mail-function 'smtpmail-send-it
+	  starttls-use-gnutls t
 	  smtpmail-starttls-credentials '(("smtp.fastmail.com" 80 nil nil))
-	  smtpmail-auth-credentials '(("smtp.fastmail.com" 80 nil nil))
+	  smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg")
 	  smtpmail-default-smtp-server "smtp.fastmail.com"
 	  smtpmail-smtp-server "smtp.fastmail.com"
 	  smtpmail-smtp-service 80
-	  smtpmail-stream-type 'tls)))
-
-(defun mail/setup (mail-config)
-  (utilities/ensure-programs-installed 'offlineimap)
-  (mail/gnus-view-setup mail-config)
-  (mail/gnus-mailbox-setup mail-config))
+	  message-kill-buffer-on-exit t)))
 
 (defun initialize (config)
   (let* ((writing-config (gethash "writing" config))
 	 (git-config (gethash "git" config))
 	 (mail-config (gethash "mail" config))
+	 (media-config (gethash "media" config))
 	 (chat-config (gethash "chat" config))
 	 (theme-config (gethash "theme" config)))
     (development/set-exec-path-from-shell-PATH)
@@ -440,6 +405,6 @@
     (development/setup)
     (writing/setup writing-config)
     (mail/setup mail-config)
-    (media/setup)))
+    (media/setup media-config)))
 
 (initialize (utilities/read-json-file "~/.emacs.json"))
