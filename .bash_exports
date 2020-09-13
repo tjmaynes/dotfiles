@@ -19,9 +19,16 @@ else
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
-# Rust
+# SDKMan
 
-export PATH="$HOME/.cargo/bin:$PATH"
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# NVM
+
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"
 
 # Pyenv
 
@@ -31,15 +38,6 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
-fi
-
-# Rbenv
-
-export RUBY_VERSION=2.6.5
-export RBENV_ROOT="$HOME/.rbenv"
-export PATH="$RBENV_ROOT/bin:$PATH"
-if command -v rbenv 1>/dev/null 2>&1; then
-  eval "$(rbenv init -)"
 fi
 
 # GPG
@@ -73,8 +71,7 @@ get-ip-address()
 
 start-ssh-agent()
 {
-  eval $(ssh-agent -s)
-  ssh-add ~/.ssh/id_rsa
+  eval $(ssh-agent -s) && ssh-add $HOME/.ssh/id_rsa
 }
 
 ############################################
@@ -118,21 +115,17 @@ docker-stop-and-remove-image()
 ################   Other   #################
 ############################################
 
-post-install()
-{
+post-install() {
+install_python_package() {
+  if [[ -x "$(command -v $1)" ]]; then
+    echo "$1 already installed..."
+  else
+    echo "Installing $1..."
+    python3 -m pip install --upgrade $1
+  fi
+}
 
-  install_python_package()
-  {
-    if [[ -x "$(command -v $1)" ]]; then
-      echo "$1 already installed..."
-    else
-      echo "Installing $1..."
-      python3 -m pip install --upgrade $1
-    fi
-  }
-
-install_python()
-{
+install_python() {
   if [[ -x "$(command -v pyenv)" ]]; then
     echo "Pyenv is not installed!"
   else
@@ -149,36 +142,7 @@ install_python()
   fi
 }
 
-install_ruby_package()
-{
-  if [[ -x "$(command -v $1)" ]]; then
-    echo "$1 already installed..."
-  else
-    echo "Installing $1..."
-    gem install $1
-  fi
-}
-
-install_ruby()
-{
-  if [[ -x "$(command -v rbenv)" ]]; then
-    echo "Rbenv is not installed!"
-  else
-    if rbenv versions --bare | grep -q "^$RUBY_VERSION\$"; then
-      echo "Ruby v$RUBY_VERSION is already installed..."
-    else
-      rbenv install $RUBY_VERSION
-    fi
-
-    rbenv global $RUBY_VERSION
-
-    install_ruby_package bundler
-    install_ruby_package xcode-install
-  fi
-}
-
 install_python
-install_ruby
 }
 
 pclone()
