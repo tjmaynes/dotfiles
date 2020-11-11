@@ -137,23 +137,22 @@
   (require 'paredit)
   (add-hook 'emacs-lisp-mode-hook 'development/elisp-mode-hook))
 
-(defun development/rust-mode-hook ()
-  (require 'rust-mode)
-  (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common))
+(defun development/clojure-mode-hook ()
+  (paredit-mode +1)
+  (enable-show-paren-mode)
+  (define-key clojure-mode-map (kbd "C-c C-a") 'align-cljlet)
+  (dolist (macro '(fresh conde run run* for-all for-map go go-loop
+			 for> doseq> fn> defn> defprotocol> gen-for))
+    (put-clojure-indent macro 'defun))
+  (clj-refactor-mode 1)
+  (cljr-add-keybindings-with-prefix "C-c C-v")
+  (local-set-key (kbd "RET") 'newline-and-indent))
 
-(defun development/rust-setup ()
-  (package-manager/ensure-packages-installed 'rust-mode 'racer 'company 'cargo)
-  (utilities/ensure-programs-installed 'racer)
-  (setq tab-width 2
-	indent-tabs-mode nil
-	company-tooltip-align-annotations t
-	rust-format-on-save t
-	racer-cmd (concat (getenv "HOME") "/.cargo/bin/racer"))
-  (add-hook 'rust-mode-hook 'development/rust-mode-hook)
-  (add-hook 'rust-mode-hook #'racer-mode)  
-  (add-hook 'rust-mode-hook 'cargo-minor-mode)
-  (add-hook 'racer-mode-hook #'eldoc-mode)
-  (add-hook 'racer-mode-hook #'company-mode))
+(defun development/clojure-setup ()
+  (package-manager/ensure-packages-installed 'clojure-mode 'cider 'align-cljlet 'paredit 'clj-refactor)
+  (setq cider-prompt-for-symbol nil)
+  (add-hook 'clojure-mode-hook 'development/clojure-mode-hook)
+  (add-hook 'cider-repl-mode-hook 'paredit-mode))
 
 (defun development/devops-setup ()
   (package-manager/ensure-packages-installed 'dockerfile-mode 'k8s-mode))
@@ -177,7 +176,7 @@
   (development/file-setup)
   (development/html-setup)
   (development/elisp-setup)
-  (development/rust-setup)
+  (development/clojure-setup)
   (development/devops-setup))
 
 (defun theme/gui-setup ()
