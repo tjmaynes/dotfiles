@@ -19,16 +19,15 @@ else
   export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
 fi
 
+# Go
+
+export GOPATH=$HOME/workspace/go
+export PATH="$GOPATH/src/k8s.io/kubernetes/third_party/etcd:${PATH}"
+
 # SDKMan
 
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# NVM
-
-export NVM_DIR="$HOME/.nvm"
-[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"
-[[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"
 
 # Pyenv
 
@@ -196,3 +195,4 @@ adjust_brightness()
   echo "Adjusting brightness level to $BRIGHTNESS"
   xrandr --output $SCREEN_OUTPUT --brightness $BRIGHTNESS
 }
+export PATH=$GOPATH/src/k8s.io/kubernetes/third_party/etcd:${PATH}

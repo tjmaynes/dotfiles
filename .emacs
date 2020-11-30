@@ -203,7 +203,7 @@
 	bookmark-default-file bookmarks-file
 	ns-use-proxy-icon nil
 	frame-title-format nil
-	default-frame-alist '((font . "Inconsolata for Powerline-12")))
+	default-frame-alist '((font . "Inconsolata for Powerline-16")))
   (ido-mode t)
   (fset 'yes-or-no-p 'y-or-n-p)
   (display-time)

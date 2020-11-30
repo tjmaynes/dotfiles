@@ -112,16 +112,10 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 Plug 'ekalinin/Dockerfile.vim'
-Plug 'hashivim/vim-terraform'
 
+Plug 'fatih/vim-go'
 Plug 'vim-python/python-syntax'
-
 Plug 'elzr/vim-json'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'pangloss/vim-javascript'
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-Plug 'isRuslan/vim-es6'
 
 call plug#end()
 
