@@ -360,38 +360,10 @@
     (require 'seq)
     (seq-map '(lambda (repo) (version-control/clone-repo repo directory)) repos)))
 
-(defun mail/setup (mail-config)
-  (utilities/ensure-programs-installed 'offlineimap 'mu)
-  (let* ((address (gethash "address" mail-config))
-	 (full-name (gethash "full-name" mail-config)))
-    (require 'mu4e)
-    (require 'smtpmail)
-    (setq user-mail-address address
-	  user-full-name full-name
-	  signature-file "~/.signature"
-	  mail-user-agent 'mu4e-user-agent
-	  mu4e-get-mail-command "offlineimap"
-	  mu4e-drafts-folder "/Drafts"
-	  mu4e-sent-folder   "/Sent"
-	  mu4e-trash-folder  "/Trash"
-	  mu4e-sent-messages-behavior 'delete
-	  mu4e-maildir-shortcuts
-	  '( (:maildir "/INBOX"    :key ?i)
-	     (:maildir "/Sent"     :key ?s)
-	     (:maildir "/Trash"    :key ?t))
-	  message-send-mail-function 'smtpmail-send-it
-	  starttls-use-gnutls t
-	  smtpmail-starttls-credentials '(("smtp.fastmail.com" 80 nil nil))
-	  smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg")
-	  smtpmail-default-smtp-server "smtp.fastmail.com"
-	  smtpmail-smtp-server "smtp.fastmail.com"
-	  smtpmail-smtp-service 80
-	  message-kill-buffer-on-exit t)))
 
 (defun initialize (config)
   (let* ((writing-config (gethash "writing" config))
 	 (git-config (gethash "git" config))
-	 (mail-config (gethash "mail" config))
 	 (media-config (gethash "media" config))
 	 (chat-config (gethash "chat" config))
 	 (theme-config (gethash "theme" config)))
@@ -404,7 +376,6 @@
     (theme/setup theme-config)
     (development/setup)
     (writing/setup writing-config)
-    (mail/setup mail-config)
     (media/setup media-config)))
 
 (initialize (utilities/read-json-file "~/.emacs.json"))

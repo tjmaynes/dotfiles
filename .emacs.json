@@ -18,9 +18,5 @@
     },
     "theme": {
 	"bookmarks-file": "~/.emacs-bookmarks"
-    },
-    "mail": {
-	"full-name": "TJ Maynes",
-	"address": "tj@tjmaynes.com"
     }
 }
