@@ -58,6 +58,16 @@ clone()
   fi
 }
 
+# Originally found here: https://stackoverflow.com/a/32592965
+kill_process_on_port() {
+  PORT=$1
+  if [[ -z $PORT ]]; then
+    echo "Please provide a PORT to kill process from"
+  else
+    kill -9 $(lsof -t -i:$PORT)
+  fi
+}
+
 backup-github-repos()
 {
   REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | python -c "import json, sys; obj=json.load(sys.stdin); lst=[str(obj[i]['name']) for i in range(len(obj))]; print ', '.join(str(p) for p in lst)")
@@ -143,4 +153,3 @@ install_jvm_package() {
     sdk install $PACKAGE $VERSION || true
   fi
 }
-
