@@ -1,0 +1,146 @@
+#!/bin/sh
+
+install_fedora-package()
+{
+  if ! rpm -q "$1"; then
+    echo "Installing package '$1'..."
+    sudo dnf install -y "$1"
+  fi
+}
+
+install_macos-package()
+{
+  if [ ! -f "$(which brew)" ]; then
+    echo "Homebrew is not installed!"
+  else
+    if ! brew list --formula -1 | grep -q "^$1\$"; then
+      echo "Installing package '$1'..."
+      brew install $1
+    fi
+  fi
+}
+
+install_package()
+{
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    install_fedora-package $1
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    install_macos-package $1
+  else
+    echo "Operating system not supported!"
+  fi
+}
+
+check-program-installed() 
+{
+  if [[ ! -x "$(command -v $1)" ]]; then
+    install_package $1
+  fi
+}
+
+pclone()
+{
+  if [[ -z $REPOSITORY ]]; then
+    echo "Please provide a personal repository name!";
+  else
+    clone tjmaynes/$1
+  fi
+}
+
+clone()
+{
+  REPOSITORY=$1
+  if [[ -z $REPOSITORY ]]; then
+    echo "Please provide a repository name!";
+  else
+    git clone git@github.com:$REPOSITORY $WORKSPACE_DIRECTORY/$REPOSITORY
+    cd $WORKSPACE_DIRECTORY/$REPOSITORY
+  fi
+}
+
+backup-github-repos()
+{
+  REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | python -c "import json, sys; obj=json.load(sys.stdin); lst=[str(obj[i]['name']) for i in range(len(obj))]; print ', '.join(str(p) for p in lst)")
+  REPOS=($(echo $REPOS | tr "," "\n"))
+
+  (mkdir -p $WORKSPACE_DIRECTORY || true) && pushd $WORKSPACE_DIRECTORY
+  for repo in "${REPOS[@]}"; do
+    echo "Backing up $repo repo to $WORKSPACE_DIRECTORY/$repo"
+    git clone https://github.com/$GIT_USERNAME/$repo.git $repo
+    tar -czf $repo.tar.gz $repo
+    rm -rf $repo
+  done
+  popd
+}
+
+get-ip-address()
+{
+  if [[ -z "$(command -v hostname)" ]]; then
+    echo "Hostname is not installed on machine"
+  else
+    hostname -I | awk '{print $1}'
+  fi
+}
+
+start-ssh-agent()
+{
+  eval $(ssh-agent -s) && ssh-add $HOME/.ssh/id_rsa
+}
+
+docker-clean-all()
+{
+  docker stop $(docker container ls -a -q)
+  docker system prune -a -f --all
+  docker rm $(docker container ls -a -q)
+}
+
+docker-stop-and-remove-image()
+{
+  docker stop "$(docker ps | grep $1 | awk '{print $1}')"
+  docker rm   "$(docker ps | grep $1 | awk '{print $1}')"
+  docker rmi  "$(docker images | grep $1 | awk '{print $3}')" --force
+}
+
+initialize_tool() {
+  TOOL=$1;
+  if command -v $TOOL 1>/dev/null 2>&1; then
+    eval "$($TOOL init -)"
+  fi
+}
+
+install_runtime() {
+  VERSION_MANAGER=$1;VERSION=$2
+  if [[ -x "$(command -v $VERSION_MANAGER)" ]]; then
+    echo "'$VERSION_MANAGER' is not installed!"
+  else
+    if ! $VERSION_MANAGER versions --bare | grep -q "^$VERSION\$"; then
+      echo "Installing Version: $VERSION..."
+      $VERSION_MANAGER install $VERSION
+    fi
+  fi
+
+  $VERSION_MANAGER global $VERSION
+}
+
+install_node_package() {
+  if [[ ! -x "$(command -v $1)" ]]; then
+    echo "Installing Node package: $1..."
+    npm install --global $1
+  fi
+}
+
+install_python_package() {
+  if [[ ! -x "$(command -v $1)" ]]; then
+    echo "Installing Python package: $1..."
+    python3 -m pip install --upgrade $1
+  fi
+}
+
+install_jvm_package() {
+  PACKAGE=$1; VERSION=$2
+  if [[ ! -x "$(command -v $1)" ]]; then
+    echo "Installing JVM package: $1..." 
+    sdk install $PACKAGE $VERSION || true
+  fi
+}
+
