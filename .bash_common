@@ -1,6 +1,6 @@
 #!/bin/sh
 
-install_fedora-package()
+install_fedora_package()
 {
   if ! rpm -q "$1"; then
     echo "Installing package '$1'..."
@@ -8,7 +8,7 @@ install_fedora-package()
   fi
 }
 
-install_macos-package()
+install_macos_package()
 {
   if [ ! -f "$(which brew)" ]; then
     echo "Homebrew is not installed!"
@@ -23,9 +23,9 @@ install_macos-package()
 install_package()
 {
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    install_fedora-package $1
+    install_fedora_package $1
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    install_macos-package $1
+    install_macos_package $1
   else
     echo "Operating system not supported!"
   fi
@@ -40,6 +40,7 @@ check-program-installed()
 
 pclone()
 {
+  REPOSITORY=$1
   if [[ -z $REPOSITORY ]]; then
     echo "Please provide a personal repository name!";
   else
