@@ -28,7 +28,6 @@ set hidden
 set autoread
 
 set number
-set statusline=[%n]\ %<%.99f\ %h%w%m%r%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%y%=%-16(\ %l,%c-%v\ %)%P
 set laststatus=2                    "always show status line
 set modeline
 set wildmenu
@@ -113,9 +112,9 @@ Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 Plug 'ekalinin/Dockerfile.vim'
 
-Plug 'fatih/vim-go'
 Plug 'vim-python/python-syntax'
 Plug 'elzr/vim-json'
+Plug 'digitaltoad/vim-pug'
 
 call plug#end()
 
