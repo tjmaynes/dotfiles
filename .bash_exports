@@ -47,8 +47,11 @@ setup_node() {
 
   install_runtime nodenv $NODE_VERSION
 
-  install_node_package yarn
-  install_node_package create-react-app
+  install_node_package yarn yarn
+  install_node_package create-react-app create-react-app
+  install_node_package react-native-cli react-native
+
+  install_node_package gatsby-cli gatsby
 }
 
 setup_python() {

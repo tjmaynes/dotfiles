@@ -134,9 +134,10 @@ install_runtime() {
 }
 
 install_node_package() {
-  if [[ ! -x "$(command -v $1)" ]]; then
-    echo "Installing Node package: $1..."
-    npm install --global $1
+  NPM_PACKAGE_NAME=$1;NPM_PACKAGE=$2
+  if [[ ! -x "$(command -v $NPM_PACKAGE)" ]]; then
+    echo "Installing Node package: $NPM_PACKAGE_NAME..."
+    npm install --global $NPM_PACKAGE_NAME
   fi
 }
 
