@@ -155,3 +155,30 @@ install_jvm_package() {
     sdk install $PACKAGE $VERSION || true
   fi
 }
+
+adjust_brightness()
+{
+  check_program_installed "xrandr"
+
+  SCREEN_OUTPUT=$(xrandr -q | grep ' connected' | head -n 1 | cut -d ' ' -f1)
+
+  BRIGHTNESS=$1; DEFAULT_BRIGHTNESS=0.6
+  [[ -x $BRIGHTNESS ]] && BRIGHTNESS=$DEFAULT_BRIGHTNESS
+
+  echo "Adjusting brightness level to $BRIGHTNESS"
+  xrandr --output $SCREEN_OUTPUT --brightness $BRIGHTNESS
+}
+
+vcvrack()
+{
+  pushd /opt/bin/vcvrack-1.1.6
+  ./Rack
+  popd
+}
+
+android-studio()
+{
+  /opt/android-studio-4.0.1.0/bin/studio.sh
+}
+
+
