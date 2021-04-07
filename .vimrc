@@ -27,8 +27,7 @@ set autochdir                       "start vim in current directory
 set hidden
 set autoread
 
-set number
-set laststatus=2                    "always show status line
+set nonumber
 set modeline
 set wildmenu
 set wildmode=longest,list,full
@@ -105,8 +104,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'jamessan/vim-gnupg'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
@@ -118,7 +115,6 @@ Plug 'digitaltoad/vim-pug'
 
 call plug#end()
 
-
 " Development
 
 set background=dark
@@ -129,7 +125,6 @@ filetype indent on
 
 let g:jsx_ext_required = 0
 
-
 " NERDTree support
 
 let NERDTreeIgnore=['\.pyc$', '\~$']
@@ -139,17 +134,6 @@ let NERDTreeMinimalUI=1
 
 map <silent> <leader>d :execute 'NERDTreeToggle ' . getcwd()<cr>
 map <silent> <leader>b :NERDTreeFromBookmark<cr>
-
-
-" Vim-Airline
-
-let g:airline_theme = 'deus'
-let g:airline_powerline_fonts = 1
-let g:airline_skip_empty_sections = 1
-let g:airline#extensions#tabline#enabled = 0
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-
 
 " Syntastic support
 
@@ -165,11 +149,9 @@ let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_loc_list_height=5
 
-
 " Goyo support
 
 map <silent> <leader>g :Goyo<cr>
-
 
 " Pretty JSON
 

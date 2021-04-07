@@ -16,3 +16,6 @@
 .config/configstore
 .config/htop
 .config/systemd
+.config/gatsby
+.config/Cypress
+.config/google-chrome

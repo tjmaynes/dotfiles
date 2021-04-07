@@ -2,7 +2,7 @@
 
 install_linux_package()
 {
-  if ! apt list --installed | grep -q "$1"; then
+  if ! dpkg -l | grep -q "$1"; then
     echo "Installing package '$1'..."
     sudo apt-get install -y "$1"
   fi
@@ -142,9 +142,16 @@ install_node_package() {
 }
 
 install_python_package() {
-  if [[ ! -x "$(command -v $1)" ]]; then
-    echo "Installing Python package: $1..."
-    python3 -m pip install --upgrade $1
+  PYTHON_PACKAGE=$1; AS_USER=$2
+
+  USER_PARAMETER="--user"
+  if [[ -z "$AS_USER" ]]; then
+    USER_PARAMETER=""
+  fi
+
+  if [[ ! -x "$(command -v $PYTHON_PACKAGE)" ]]; then
+    echo "Installing Python package: $PYTHON_PACKAGE..."
+    python3 -m pip install --upgrade $USER_PARAMETER $PYTHON_PACKAGE
   fi
 }
 
@@ -153,5 +160,39 @@ install_jvm_package() {
   if [[ ! -x "$(command -v $1)" ]]; then
     echo "Installing JVM package: $1..." 
     sdk install $PACKAGE $VERSION || true
+  fi
+}
+
+create_dotnet_project() {
+  PROJECT_NAME=$1; PROJECT_TYPE=$2
+
+  if [[ -z "$PROJECT_NAME" ]]; then
+    echo "Please provide a project name"
+  elif [[ -z "$PROJECT_TYPE" ]]; then
+    echo "Please provide a project type (console or web)"
+  elif [[ -z "$(command -v dotnet)" ]]; then
+    echo "Please install dotnet"
+  elif [[ -d "$PROJECT_NAME" ]]; then
+    echo "Directory '$PROJECT_NAME' already exists!"
+  else
+    PROJECT_DIRECTORY_NAME=$(echo $PROJECT_NAME | tr '[:upper:]' '[:lower:]')
+
+    mkdir -p $PROJECT_DIRECTORY_NAME/{src,tests}
+    cd $PROJECT_DIRECTORY_NAME
+
+    dotnet new sln --name $PROJECT_DIRECTORY_NAME
+
+    PROJECT_OUTPUT=Web
+    [[ $PROJECT_TYPE == "console" ]] && PROJECT_OUTPUT=CLI
+    PROJECT_FULL_NAME="$PROJECT_NAME.$PROJECT_OUTPUT"
+
+    dotnet new $PROJECT_TYPE -o src/$PROJECT_FULL_NAME
+    dotnet sln add src/$PROJECT_FULL_NAME/$PROJECT_FULL_NAME.csproj 
+
+    dotnet new xunit -o tests/$PROJECT_FULL_NAME.Tests
+    dotnet add tests/$PROJECT_FULL_NAME.Tests/$PROJECT_FULL_NAME.Tests.csproj reference src/$PROJECT_FULL_NAME/$PROJECT_FULL_NAME.csproj 
+    dotnet sln add tests/$PROJECT_FULL_NAME.Tests/$PROJECT_FULL_NAME.Tests.csproj
+
+    echo "# $PROJECT_NAME" > README.md
   fi
 }
