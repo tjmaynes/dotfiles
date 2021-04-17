@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 setup_secrets() {
   [[ -f "$HOME/.bash_secrets" ]] && source $HOME/.bash_secrets
@@ -17,7 +17,6 @@ setup_exports() {
     export PS1="\n\w\n\u $"
   else
     export TERM="xterm-256color"
-    export PS1="\n\u in \w\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/')\n=> \[$(tput sgr0)\]"
   fi
 }
 
@@ -39,51 +38,39 @@ setup_aliases() {
 }
 
 setup_jvm() {
-  export JAVA_VERSION=13.0.2.j9-adpt
+  export JAVA_VERSION=16.0.0-zulu
   export LEININGEN_VERSION=2.9.5
   export SDKMAN_DIR="$HOME/.sdkman"
-  [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-  install_jvm_package java $JAVA_VERSION
-  install_jvm_package leiningen $LEININGEN_VERSION
+  install_jvm_package java java "$JAVA_VERSION"
+  install_jvm_package leiningen lein "$LEININGEN_VERSION"
 }
 
 setup_node() {
-  export NODE_VERSION=14.15.3
-  export PATH="$HOME/.nodenv/bin:$PATH"
-  export PATH="$HOME/.nodenv/shims:$PATH"
-
-  initialize_tool nodenv 
+  export NODE_VERSION=15.14.0
 
   install_runtime nodenv $NODE_VERSION
 
   install_node_package yarn yarn
   install_node_package create-react-app create-react-app
-
-  install_node_package gatsby-cli gatsby
 }
 
 setup_python() {
-  export PYTHON_VERSION=3.8.0
+  export PYTHON_VERSION=3.9.1
   export PYTHON_CONFIGURE_OPTS="--enable-shared"
 
-  export PATH="$HOME/.pyenv/bin:$PATH"
-  export PATH="$HOME/.pyenv/shims:$PATH"
-  initialize_tool pyenv
   install_runtime pyenv $PYTHON_VERSION
 
-  install_python_package pip
+  install_python_package pip true
   (pip install --upgrade pip || true) >/dev/null
 
-  install_python_package pylint true
   install_python_package cookiecutter true
-  install_python_package jupyter true
 }
 
 setup_runtimes() {
   setup_jvm
-  setup_python
   setup_node
+  setup_python
 }
 
 main() {
