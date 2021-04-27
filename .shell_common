@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function install_linux_package()
+function install-linux-package()
 {
   if ! dpkg -l | grep -q "$1"; then
     echo "Installing package '$1'..."
@@ -8,7 +8,7 @@ function install_linux_package()
   fi
 }
 
-function install_macos_package()
+function install-macos-package()
 {
   if [[ -z "$(command -v brew)" ]]; then
     echo "Homebrew is not installed!"
@@ -23,25 +23,25 @@ function install_macos_package()
 function install_package()
 {
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    install_linux_package $1
+    install-linux-package $1
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    install_macos_package $1
+    install-macos-package $1
   else
     echo "Operating system not supported!"
   fi
 }
 
-function remove_and_create_directory() {
+function remove-and-create-directory() {
   rm -rf $1 && mkdir -p $1 || true
 }
 
-function install_binary_from_url() {
+function install-binary-from-url() {
   TOOL_NAME=$1; TOOL_URL=$2; TOOL_DESTINATION=$HOME/workspace/bin/$TOOL_NAME
 
   if [[ -z "$(command -v $TOOL_NAME)" ]]; then
     echo "Installing $TOOL_NAME via $TOOL_URL..."
 
-    remove_and_create_directory $TOOL_DESTINATION
+    remove-and-create-directory $TOOL_DESTINATION
 
     curl -Lo $TOOL_DESTINATION/$TOOL_NAME $TOOL_URL
 
@@ -51,13 +51,13 @@ function install_binary_from_url() {
   fi
 }
 
-function install_tar_from_url() {
+function install-tar-from-url() {
   TOOL_NAME=$1; TOOL_URL=$2; TOOL_DESTINATION=$HOME/workspace/bin
 
   if [[ -z "$(command -v $TOOL_NAME)" ]]; then
     echo "Installing $TOOL_NAME via $TOOL_URL..."
 
-    remove_and_create_directory $TOOL_NAME-temp
+    remove-and-create-directory $TOOL_NAME-temp
 
     pushd $TOOL_NAME-temp
     curl -sL $TOOL_URL | tar xvz
@@ -73,16 +73,13 @@ function install_tar_from_url() {
 function check-program-installed() 
 {
   if [[ ! -x "$(command -v $1)" ]]; then
-    install_package $1
+    install-package $1
   fi
 }
 
 function pclone()
 {
-  REPOSITORY=$1
-  if [[ -z $REPOSITORY ]]; then
-    echo "Please provide a personal repository name!";
-  else
+  if [[ -n "$1" ]]; then
     clone tjmaynes/$1
   fi
 }
@@ -98,8 +95,16 @@ function clone()
   fi
 }
 
+function install-ruby-gem() {
+  GEM_NAME=$1 GEM_CLI_NAME=$2
+
+  if [[ -z "$(command -v $GEM_CLI_NAME)" ]]; then
+    gem install $GEM_NAME --no-document
+  fi
+}
+
 # Originally found here: https://stackoverflow.com/a/32592965
-function kill_process_on_port() {
+function kill-process-on-port() {
   PORT=$1
   if [[ -z $PORT ]]; then
     echo "Please provide a PORT to kill process from"
@@ -151,15 +156,29 @@ function docker-stop-and-remove-image()
   docker rmi  "$(docker images | grep $1 | awk '{print $3}')" --force
 }
 
-function initialize_tool() {
+function initialize-tool() {
   TOOL=$1;
-  if [[ ! -z "$(command -v $TOOL)" ]]; then
+  if [[ -d "$HOME/.$TOOL" ]]; then
     eval "$($TOOL init -)"
   fi
 }
 
-function install_runtime() {
+function install-runtime() {
   VERSION_MANAGER=$1; VERSION=$2
+
+  if [[ "$VERSION_MANAGER" == "rbenv"  ]] && [[ "$OSTYPE" == "darwin"* ]]; then
+    export HOMEBREW_ROOT=/opt/homebrew/opt
+    export RBENV_ROOT=$HOMEBREW_ROOT/rbenv
+    export PATH=$RBENV_ROOT/bin:$PATH
+
+    export PATH="$HOMEBREW_ROOT/openssl@1.1/bin:$PATH"
+    export LDFLAGS="-L$HOMEBREW_ROOT/openssl@1.1/lib"
+    export CPPFLAGS="-I$HOMEBREW_ROOT/openssl@1.1/include"
+    export PKG_CONFIG_PATH="$HOMEBREW_ROOT/openssl@1.1/lib/pkgconfig"
+    export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$HOMEBREW_ROOT/openssl@1.1"
+
+    export RUBY_CFLAGS="-Wno-error=implicit-function-declaration"
+  fi
 
   if [[ -z "$(command -v $VERSION_MANAGER)" ]]; then
     echo "'$VERSION_MANAGER' is not installed!"
@@ -173,7 +192,7 @@ function install_runtime() {
   fi
 }
 
-function install_node_package() {
+function install-node-package() {
   NPM_PACKAGE_NAME=$1; NPM_PACKAGE=$2
 
   if [[ ! -z "$(command -v $NPM_PACKAGE)" && ! -z "$(command -v npm)" ]]; then
@@ -182,7 +201,7 @@ function install_node_package() {
   fi
 }
 
-function install_python_package() {
+function install-python-package() {
   PYTHON_PACKAGE=$1; AS_USER=$2
 
   USER_PARAMETER="--user"
@@ -196,7 +215,7 @@ function install_python_package() {
   fi
 }
 
-function install_jvm_package() {
+function install-jvm-package() {
   PACKAGE=$1; PACKAGE_ALIAS=$2; VERSION=$3
   if [[ -z "$(command -v $PACKAGE_ALIAS)" && ! -z "$(command -v sdk)" ]]; then
     echo "Installing JVM package: $PACKGE..." 
@@ -204,7 +223,7 @@ function install_jvm_package() {
   fi
 }
 
-function setup_git() {
+function setup-git() {
   git config --global user.name "$USER_GIT_NAME"
   git config --global user.email "$USER_EMAIL"
 
@@ -233,7 +252,7 @@ function setup_git() {
   git config --global init.defaultBranch main
 }
 
-function setup_gpg() {
+function setup-gpg() {
   if [[ ! -f $HOME/.gnupg/gpg-agent.conf ]]; then
     (mkdir -p "$HOME/.gnupg" || true) && cat <<EOF | tee -a "$HOME/.gnupg/gpg-agent.conf"
 pinentry-program $(command -v pinentry)
@@ -247,11 +266,11 @@ EOF
   find "$HOME/.gnupg" -type d -exec chmod 700 {} \;
 }
 
-function setup_secrets() {
+function setup-secrets() {
   [[ -f "$HOME/.bash_secrets" ]] && source $HOME/.bash_secrets
 }
 
-function setup_exports() {
+function setup-exports() {
   export LANG=en_US.UTF-8
   export EDITOR=vi
   export PATH=/usr/local/bin:$PATH
@@ -271,7 +290,7 @@ function setup_exports() {
   fi
 }
 
-function setup_aliases() {
+function setup-aliases() {
   alias psx='ps -x'
   alias create-ssh-key='ssh-keygen -t rsa -b 4096 -C'
   alias gen-pass='openssl rand -base64 25 | tr -d /'
@@ -288,56 +307,66 @@ function setup_aliases() {
   fi
 }
 
-function setup_jvm() {
+function setup-jvm() {
   export SDKMAN_DIR="$HOME/.sdkman"
   [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
   export JAVA_VERSION=16.0.0-zulu
-  install_jvm_package java java $JAVA_VERSION
+  install-jvm-package java java $JAVA_VERSION
 
-  export LEININGEN_VERSION=2.9.5
-  install_jvm_package leiningen lein $LEININGEN_VERSION
+  export KOTLIN_VERSION=1.4.31
+  install-jvm-package kotlin kotlinc $KOTLIN_VERSION
 }
 
-function setup_node() {
+function setup-ruby() {
+  initialize-tool "rbenv"
+
+  export RUBY_VERSION=2.7.1
+  install-runtime rbenv $RUBY_VERSION
+
+  install-ruby-gem "xcode-install" "xcversion"
+}
+
+function setup-node() {
   export PATH="$HOME/.nodenv/bin:$PATH"
   export PATH="$HOME/.nodenv/shims:$PATH"
 
   export NODE_VERSION=15.14.0
-  install_runtime nodenv $NODE_VERSION
+  install-runtime nodenv $NODE_VERSION
 
-  install_node_package yarn yarn
-  install_node_package create-react-app create-react-app
+  install-node-package yarn yarn
+  install-node-package create-react-app create-react-app
 }
 
-function setup_python() {
+function setup-python() {
   export PATH="$HOME/.pyenv/bin:$PATH"
   export PATH="$HOME/.pyenv/shims:$PATH"
-  [[ -d "$HOME/.pyenv" ]]; eval "$(pyenv init -)"
+  initialize-tool "pyenv"
 
   export PYTHON_VERSION=3.9.1
   export PYTHON_CONFIGURE_OPTS="--enable-shared"
-  install_runtime pyenv $PYTHON_VERSION
+  install-runtime pyenv $PYTHON_VERSION
 
-  install_python_package pip true
-  install_python_package cookiecutter true
+  install-python-package pip true
+  install-python-package cookiecutter true
 }
 
-function setup_runtimes() {
-  setup_jvm
-  setup_node
-  setup_python
+function setup-runtimes() {
+  setup-jvm
+  setup-ruby
+  setup-node
+  setup-python
 }
 
 function main() {
   export USER_GIT_NAME="TJ Maynes (Personal)"
   export USER_EMAIL="tj@tjmaynes.com"
 
-  setup_git
-  setup_secrets
-  setup_exports
-  setup_aliases
-  setup_runtimes
+  setup-git
+  setup-secrets
+  setup-exports
+  setup-aliases
+  setup-runtimes
 }
 
 main
