@@ -86,18 +86,24 @@ function kill-process-on-port()
 
 function backup-github-repos()
 {
-  REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | python -c "import json, sys; obj=json.load(sys.stdin); lst=[str(obj[i]['name']) for i in range(len(obj))]; print ', '.join(str(p) for p in lst)")
-  REPOS=($(echo $REPOS | tr "," "\n"))
+  REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | jq 'map(.name) | join(",")')
+
+  BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+  WORKSPACE_BACKUP_DIR=$WORKSPACE_BACKUP_DIR/$BACKUP_TIMESTAMP
 
   if [[ ! -d "$WORKSPACE_BACKUP_DIR" ]]; then
     mkdir -p "$WORKSPACE_BACKUP_DIR"
   fi
 
-  for repo in "${REPOS[@]}"; do
+  for repo in $(echo $REPOS | sed "s/,/ /g" | tr -d '"'); do
     echo "Backing up $repo repo to $WORKSPACE_BACKUP_DIR"
+
     git clone https://github.com/$GIT_USERNAME/$repo.git $WORKSPACE_BACKUP_DIR/$repo
-    tar -czf $repo.tar.gz $WORKSPACE_BACKUP_DIR/$repo
+
+    pushd $WORKSPACE_BACKUP_DIR
+    tar -czf $repo.tar.gz $repo
     rm -rf $WORKSPACE_BACKUP_DIR/$repo
+    popd
   done
 }
 
