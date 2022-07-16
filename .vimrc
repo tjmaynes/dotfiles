@@ -1,5 +1,5 @@
 " ---- dot vimrc ----
-" Author: TJ Maynes <tjmaynes at gmail dot com>
+" Author: TJ Maynes <tj at tjmaynes dot com>
 " Website: https://tjmaynes.com/
 
 
@@ -51,7 +51,7 @@ set foldlevel=99
 if has("gui_running")
   set fuoptions=maxvert,maxhorz
   set transparency=3
-  set guifont=Inconsolata_For_Powerline:h16
+  set guifont=Inconsolata:h16
   set guioptions-=L
   set guioptions-=r
 endif
@@ -106,13 +106,26 @@ Plug 'tpope/vim-surround'
 Plug 'jamessan/vim-gnupg'
 Plug 'editorconfig/editorconfig-vim'
 
+Plug 'kblin/vim-fountain'
 Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
+
+Plug 'LnL7/vim-nix'
+
 Plug 'ekalinin/Dockerfile.vim'
 
+Plug 'fatih/vim-go'
+
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'jparise/vim-graphql'
+
 Plug 'vim-python/python-syntax'
+
 Plug 'elzr/vim-json'
 Plug 'digitaltoad/vim-pug'
+Plug 'cespare/vim-toml'
 
 call plug#end()
 
