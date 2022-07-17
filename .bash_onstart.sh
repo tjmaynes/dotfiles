@@ -89,20 +89,20 @@ function backup-github-repos()
   REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | jq 'map(.name) | join(",")')
 
   BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-  WORKSPACE_BACKUP_DIR=$WORKSPACE_BACKUP_DIR/$BACKUP_TIMESTAMP
+  BACKUP_DIR=$BACKUP_DIR/$BACKUP_TIMESTAMP
 
-  if [[ ! -d "$WORKSPACE_BACKUP_DIR" ]]; then
-    mkdir -p "$WORKSPACE_BACKUP_DIR"
+  if [[ ! -d "$BACKUP_DIR" ]]; then
+    mkdir -p "$BACKUP_DIR"
   fi
 
   for repo in $(echo $REPOS | sed "s/,/ /g" | tr -d '"'); do
-    echo "Backing up $repo repo to $WORKSPACE_BACKUP_DIR"
+    echo "Backing up $repo repo to $BACKUP_DIR"
 
-    git clone https://github.com/$GIT_USERNAME/$repo.git $WORKSPACE_BACKUP_DIR/$repo
+    git clone https://github.com/$GIT_USERNAME/$repo.git $BACKUP_DIR/$repo
 
-    pushd $WORKSPACE_BACKUP_DIR
+    pushd $BACKUP_DIR
     tar -czf $repo.tar.gz $repo
-    rm -rf $WORKSPACE_BACKUP_DIR/$repo
+    rm -rf $BACKUP_DIR/$repo
     popd
   done
 }
