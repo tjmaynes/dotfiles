@@ -89,7 +89,7 @@ function backup-github-repos()
   REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | jq 'map(.name) | join(",")')
 
   BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-  BACKUP_DIR=$BACKUP_DIR/$BACKUP_TIMESTAMP
+  BACKUP_DIR=$BACKUP_DIR/github/$BACKUP_TIMESTAMP
 
   if [[ ! -d "$BACKUP_DIR" ]]; then
     mkdir -p "$BACKUP_DIR"
