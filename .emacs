@@ -117,6 +117,18 @@
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8))
 
+(defun development/go-onsave-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+
+(defun development/golang-setup ()
+  (package-manager/ensure-packages-installed 'go-mode 'lsp-mode 'lsp-ui 'company 'yasnippet)
+  (setq company-idle-delay 0
+	company-minimum-prefix-length 1)
+  (add-hook 'go-mode-hook #'development/golang-onsave-hooks)
+  (add-hook 'go-mode-hook #'lsp-deferred)
+  (add-hook 'go-mode-hook #'yas-minor-mode))
+
 (defun development/html-setup ()
   (package-manager/ensure-packages-installed 'web-mode)
   (setq web-mode-markup-indent-offset 2
@@ -136,23 +148,6 @@
   (package-manager/ensure-packages-installed 'paredit)
   (require 'paredit)
   (add-hook 'emacs-lisp-mode-hook 'development/elisp-mode-hook))
-
-(defun development/clojure-mode-hook ()
-  (paredit-mode +1)
-  (enable-show-paren-mode)
-  (define-key clojure-mode-map (kbd "C-c C-a") 'align-cljlet)
-  (dolist (macro '(fresh conde run run* for-all for-map go go-loop
-			 for> doseq> fn> defn> defprotocol> gen-for))
-    (put-clojure-indent macro 'defun))
-  (clj-refactor-mode 1)
-  (cljr-add-keybindings-with-prefix "C-c C-v")
-  (local-set-key (kbd "RET") 'newline-and-indent))
-
-(defun development/clojure-setup ()
-  (package-manager/ensure-packages-installed 'clojure-mode 'cider 'align-cljlet 'paredit 'clj-refactor)
-  (setq cider-prompt-for-symbol nil)
-  (add-hook 'clojure-mode-hook 'development/clojure-mode-hook)
-  (add-hook 'cider-repl-mode-hook 'paredit-mode))
 
 (defun development/devops-setup ()
   (package-manager/ensure-packages-installed 'dockerfile-mode 'k8s-mode))
@@ -180,7 +175,7 @@
   (development/file-setup)
   (development/html-setup)
   (development/elisp-setup)
-  (development/clojure-setup)
+  (development/golang-setup)
   (development/devops-setup)
   (development/nix-setup))
 
@@ -253,10 +248,10 @@
 	   "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
 	  ("m" "Meeting" entry (file org-default-notes-file)
 	   "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-	    ("i" "Idea" entry (file org-default-notes-file)
-	     "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
-	    ("n" "Next Task" entry (file+headline org-default-notes-file "tasks")
-	     "** NEXT %? \nDEADLINE: %t")))
+	  ("i" "Idea" entry (file org-default-notes-file)
+	   "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+	  ("n" "Next Task" entry (file+headline org-default-notes-file "tasks")
+	   "** NEXT %? \nDEADLINE: %t")))
   (setq org-todo-keywords
 	'((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
 	  (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING")))
@@ -270,12 +265,12 @@
 	  ("DONE" ("WAITING") ("CANCELLED") ("INACTIVE"))))
   (setq org-todo-keyword-faces
 	'(("TODO" :foreground "red" :weight bold)
-	    ("NEXT" :foreground "blue" :weight bold)
-	    ("DONE" :foreground "forest green" :weight bold)
-	    ("WAITING" :foreground "orange" :weight bold)
-	    ("INACTIVE" :foreground "magenta" :weight bold)
-	    ("CANCELLED" :foreground "forest green" :weight bold)
-	    ("MEETING" :foreground "forest green" :weight bold))))
+	  ("NEXT" :foreground "blue" :weight bold)
+	  ("DONE" :foreground "forest green" :weight bold)
+	  ("WAITING" :foreground "orange" :weight bold)
+	  ("INACTIVE" :foreground "magenta" :weight bold)
+	  ("CANCELLED" :foreground "forest green" :weight bold)
+	  ("MEETING" :foreground "forest green" :weight bold))))
 
 (defun writing/spellchecker-setup ()
   (setq ispell-program-name "aspell"
