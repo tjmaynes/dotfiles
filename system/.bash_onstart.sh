@@ -17,6 +17,12 @@ function setup_environment()
     alias pbpaste='xclip -selection clipboard -o'
   fi
 
+  export PATH=/usr/sbin:$PATH
+
+  export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
+  export NIX_PATH=nixpkgs=/nix/var/nix/profiles/per-user/$HOST_USERNAME/channels/nixpkgs${NIX_PATH:+:}$NIX_PATH
+  export NIX_PATH=home-manager=/nix/var/nix/profiles/per-user/$HOST_USERNAME/channels/home-manager${NIX_PATH:+:}$NIX_PATH
+
   export PATH=$HOME/.npm-packages/bin:$PATH
   export NODE_PATH=$HOME/.npm-packages/lib/node_modules
 
@@ -55,7 +61,7 @@ function setup_vim() {
 function pclone()
 {
   REPO_NAME=$1
-  GIT_REPO=$GIT_USERNAME/$REPO_NAME
+  GIT_REPO=$HOST_GIT_USERNAME/$REPO_NAME
 
   if [[ ! -d "$WORKSPACE_DIR" ]]; then
     mkdir -p "$WORKSPACE_DIR"
@@ -86,7 +92,7 @@ function kill-process-on-port()
 
 function backup-github-repos()
 {
-  REPOS=$(curl -s "https://api.github.com/users/$GIT_USERNAME/repos" | jq 'map(.name) | join(",")')
+  REPOS=$(curl -s "https://api.github.com/users/$HOST_GIT_USERNAME/repos" | jq 'map(.name) | join(",")')
 
   BACKUP_TIMESTAMP=$(date +%Y%m%d-%H%M%S)
   BACKUP_DIR=$BACKUP_DIR/github/$BACKUP_TIMESTAMP
@@ -98,7 +104,7 @@ function backup-github-repos()
   for repo in $(echo $REPOS | sed "s/,/ /g" | tr -d '"'); do
     echo "Backing up $repo repo to $BACKUP_DIR"
 
-    git clone https://github.com/$GIT_USERNAME/$repo.git $BACKUP_DIR/$repo
+    git clone https://github.com/$HOST_GIT_USERNAME/$repo.git $BACKUP_DIR/$repo
 
     pushd $BACKUP_DIR
     tar -czf $repo.tar.gz $repo
@@ -116,9 +122,19 @@ function get-ip-address()
   fi
 }
 
+function generate-ssh-key()
+{
+  if [[ ! -f "$HOME/.ssh/id_ed25519.pub" ]]; then
+    echo "Generating ssh key for $HOST_EMAIL..."
+    ssh-keygen -t ed25519 -C "$HOST_EMAIL"
+  fi
+}
+
 function start-ssh-agent()
 {
-  eval $(ssh-agent -s) && ssh-add $HOME/.ssh/id_rsa
+  generate-ssh-key
+
+  eval $(ssh-agent -s) && ssh-add $HOME/.ssh/id_ed25519
 }
 
 function docker-clean-all()
