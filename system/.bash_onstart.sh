@@ -159,6 +159,20 @@ function docker-stop-and-remove-image()
   fi
 }
 
+function convert-music-to-mp3() {
+  if [[ -z "$(command -v ffmpeg)" ]]; then
+    echo "Please install 'ffmpeg' on this machine before running this command"
+  elif [[ -z "$(ls -la *.m4a)" ]]; then
+    echo "No 'm4a' files were found in this directory"
+  else
+    rm -rf output && mkdir output
+
+    for file in *.m4a; do
+      ffmpeg -i "$file" -codec:v copy -codec:a libmp3lame -q:a 2 output/"${file%.m4a}.mp3"
+    done
+  fi
+}
+
 function main()
 {
   setup_environment
