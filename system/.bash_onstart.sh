@@ -19,10 +19,6 @@ function setup_environment()
 
   export PATH=/usr/sbin:$PATH
 
-  export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
-  export NIX_PATH=nixpkgs=/nix/var/nix/profiles/per-user/$HOST_USERNAME/channels/nixpkgs${NIX_PATH:+:}$NIX_PATH
-  export NIX_PATH=home-manager=/nix/var/nix/profiles/per-user/$HOST_USERNAME/channels/home-manager${NIX_PATH:+:}$NIX_PATH
-
   export PATH=$HOME/.npm-packages/bin:$PATH
   export NODE_PATH=$HOME/.npm-packages/lib/node_modules
 
