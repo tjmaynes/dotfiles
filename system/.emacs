@@ -291,7 +291,6 @@
   (writing/latex-setup))
 
 (defun media/music-setup ()
-  (utilities/ensure-programs-installed 'mpv)
   (package-manager/ensure-packages-installed 'emms)
   (setq
    emms-player-list '(emms-player-mpv)
