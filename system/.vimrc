@@ -51,7 +51,7 @@ set foldlevel=99
 if has("gui_running")
   set fuoptions=maxvert,maxhorz
   set transparency=3
-  set guifont=Inconsolata:h16
+  set guifont=InconsolataGo:h16
   set guioptions-=L
   set guioptions-=r
 endif
@@ -96,7 +96,6 @@ autocmd BufNewFile,BufRead *.js, *.html, *.css
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'jnurmine/Zenburn'
 Plug 'scrooloose/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/syntastic'
@@ -133,7 +132,6 @@ call plug#end()
 
 set background=dark
 silent! syntax enable
-silent! colorscheme zenburn
 
 filetype indent on
 
