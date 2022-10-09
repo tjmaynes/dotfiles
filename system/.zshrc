@@ -8,7 +8,7 @@
 
 [[ -n "$(command -v go)" ]] && export GOPATH=$HOME/workspace/go; export PATH=$GOPATH/bin:$PATH
 
-[[ -n "$(command -v node)" ]] && export PATH=$HOME/.npm-packages/bin:$PATH; export NODE_PATH=$HOME/.npm-packages/lib/node_modules
+[[ -n "$(command -v node)" ]] && mkdir -p $HOME/.npm-packages/lib; export PATH=$HOME/.npm-packages/bin:$PATH; export NODE_PATH=$HOME/.npm-packages/lib/node_modules
 
 command -v colima &> /dev/null && ! colima status &> /dev/null && echo "Starting colima..." && colima start &> /dev/null
 
