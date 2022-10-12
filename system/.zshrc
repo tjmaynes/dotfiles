@@ -12,4 +12,6 @@
 
 command -v colima &> /dev/null && ! colima status &> /dev/null && echo "Starting colima..." && colima start &> /dev/null
 
+alias ls='lsd'
+
 source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
