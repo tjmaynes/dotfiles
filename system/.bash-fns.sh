@@ -55,6 +55,10 @@ function backup-github-repos() {
   done
 }
 
+function convert-m4a-to-mp3() {
+  mkdir -p tmp && for f in *.m4a; do ffmpeg -i "$f" -codec:v copy -codec:a libmp3lame -q:a 2 tmp/"${f%.m4a}.mp3"; done
+}
+
 function get-ip-address() {
   if [[ -z "$(command -v hostname)" ]]; then
     echo "Hostname is not installed on machine"
