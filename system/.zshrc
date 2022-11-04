@@ -13,7 +13,7 @@
 }
 
 [[ -n "$(command -v node)" ]] && {
-    mkdir -p $HOME/.npm-packages/lib
+    mkdir -p $HOME/.npm-packages/lib/node_modules
     export PATH=$HOME/.npm-packages/bin:$PATH
     export NODE_PATH=$HOME/.npm-packages/lib/node_modules
 }
