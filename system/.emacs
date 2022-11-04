@@ -201,7 +201,7 @@
 	display-time-day-and-date t
 	ns-use-proxy-icon nil
 	frame-title-format nil
-	default-frame-alist '((font . "Inconsolata-12")))
+	default-frame-alist '((font . "Inconsolata-16")))
   (ido-mode t)
   (fset 'yes-or-no-p 'y-or-n-p)
   (display-time)
