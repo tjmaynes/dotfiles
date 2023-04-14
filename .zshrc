@@ -28,6 +28,10 @@ function setup_coding_environment() {
     export NODE_PATH=$HOME/.npm-packages/lib/node_modules
   fi
 
+  if [[ -n "$(command -v python3)" ]]; then
+    export PATH=$HOME/Library/Python/3.11/bin:$PATH
+  fi
+
   if [[ -n "$(command -v go)" ]]; then
     export GOPATH=$HOME/workspace/go
     export PATH=$GOPATH/bin:$PATH
@@ -38,8 +42,6 @@ function setup_coding_environment() {
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
   fi
-
-  command -v colima &> /dev/null && ! colima status &> /dev/null && echo "Starting colima..." && colima start &> /dev/null
 }
 
 [[ -f "$HOME/.zprezto/init.zsh" ]] && source $HOME/.zprezto/init.zsh

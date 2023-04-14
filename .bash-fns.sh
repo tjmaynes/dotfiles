@@ -14,11 +14,9 @@ function pclone() {
 
     if [[ ! -d "$WORKSPACE_DIR/$REPO_NAME" ]]; then
       git clone "git@github.com:$GIT_REPO.git" "$WORKSPACE_DIR/$REPO_NAME"
-
-      [[ -d "$WORKSPACE_DIR/$REPO_NAME" ]] && cd "$WORKSPACE_DIR/$REPO_NAME"
-    else
-      cd "$WORKSPACE_DIR/$REPO_NAME"
     fi
+
+    cd "$WORKSPACE_DIR/$REPO_NAME"
   fi
 }
 
