@@ -1,22 +1,10 @@
-# Editors
-.idea/
-.vscode/
-
 # MacOS
 .DS_Store
 
-# Weird outputs
+# Generated
+tmp/
 *.log
 
-# Secrets
-.bash_secrets
-
-# Config
-.config/Code
-.config/configstore
-.config/htop
-.config/systemd
-.config/gatsby
-.config/Cypress
-.config/google-chrome
-.config/iterm2
+# Editors
+.idea/
+.vscode/
