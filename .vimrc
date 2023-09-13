@@ -113,8 +113,6 @@ Plug 'LnL7/vim-nix'
 
 Plug 'ekalinin/Dockerfile.vim'
 
-Plug 'fatih/vim-go'
-
 Plug 'pangloss/vim-javascript'
 Plug 'leafgarland/typescript-vim'
 Plug 'maxmellon/vim-jsx-pretty'
