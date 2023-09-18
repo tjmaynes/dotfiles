@@ -1,7 +1,7 @@
 [general]
 ui = ttyui
 accounts = Mail
-pythonfile = ~/.offlineimap.py
+pythonfile = $HOME/.offlineimap.py
 autorefresh = 4
 
 [Account Mail]
@@ -10,7 +10,7 @@ remoterepository = Mail-Remote
 
 [Repository Mail-Local]
 type = Maildir
-localfolders = ~/syncbox/mail/tjmaynes.com
+localfolders = $HOME/workspace/mail/tjmaynes.com
 
 [Repository Mail-Remote]
 type = IMAP
