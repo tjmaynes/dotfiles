@@ -14,7 +14,7 @@ function backup_projects()
 
     tar cvzf \
       "$BACKUPS_DIRECTORY/$BACKUP_NAME" --exclude "node_modules" --exclude "gems" --exclude "Pods" --exclude "vendor" --exclude "tmp" --exclude "build" --exclude ".DS_Store" \
-      "$PROJECTS_DIRECTORY"
+       -C "$PROJECTS_DIRECTORY"
   fi
 }
 
