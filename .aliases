@@ -1,0 +1,2 @@
+alias workspace='cd $HOME/workspace/tjmaynes'
+alias dotfiles='cd $HOME/workspace/tjmaynes/dotfiles'
