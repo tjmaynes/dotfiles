@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-function backup_workspace()
+function kill-process-on-port() {
+  PORT=$1
+  if [[ ! -z "$(lsof -t -i :$PORT)" ]]; then
+    (kill -9 "$(lsof -t -i:$PORT -sTCP:LISTEN)" >/dev/null 2>&1) || true
+  fi
+}
+
+function backup-workspace()
 {
   if [[ -z "$WORKSPACE_DIRECTORY" ]]; then
     echo "Please set 'WORKSPACE_DIRECTORY' environment variable before running this command..."
@@ -14,10 +21,10 @@ function backup_workspace()
 
     tar cvzf \
       "$BACKUPS_DIRECTORY/$BACKUP_NAME" --exclude "node_modules" --exclude ".cache" --exclude "gems" --exclude "Pods" --exclude "vendor" --exclude "tmp" --exclude "build" --exclude ".DS_Store" \
-       -C "$WORKSPACE_DIRECTORY" .
+      -C "$WORKSPACE_DIRECTORY" .
   fi
 }
 
-function backup_all() {
-  backup_workspace
+function backup-all() {
+  backup-workspace
 }
