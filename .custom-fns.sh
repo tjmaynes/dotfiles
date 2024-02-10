@@ -28,3 +28,12 @@ function backup-workspace()
 function backup-all() {
   backup-workspace
 }
+
+function convert-m4a-to-mp3() {
+  DIRECTORY=$(basename "$PWD")
+  mkdir -p "$DIRECTORY"
+
+  for f in *.m4a; do
+    ffmpeg -i "$f" -codec:v copy -codec:a libmp3lame -q:a 2 "$DIRECTORY"/"${f%.m4a}.mp3"
+  done
+}
