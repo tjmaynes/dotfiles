@@ -86,9 +86,9 @@
   (global-set-key (kbd "C-c g") 'magit-status)
   (global-set-key (kbd "C-c p") 'package-list-packages)
   (global-set-key (kbd "C-c 3") 'w3m-goto-url)
-  (global-set-key (kbd "C-c n") 'elfeed)
   (global-set-key (kbd "C-c w") 'w3m-browse-url)
-  (global-set-key (kbd "C-c t") 'eshell)
+  (global-set-key (kbd "C-c n") 'elfeed)
+  (global-set-key (kbd "C-c t") 'multi-term)
   (global-set-key (kbd "C-c r") 'irc)
   (global-set-key (kbd "C-c e p") 'emms-play-directory)
   (global-set-key (kbd "C-c e <left>") 'emms-previous)
@@ -98,6 +98,8 @@
   (global-set-key (kbd "C-c e r") 'emms-streams)
   (global-set-key (kbd "C-c e s") 'emms-shuffle)
   (global-set-key (kbd "C-c e o") 'emms-playlist-mode-go)
+  (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
+  (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
   (global-set-key (kbd "C-x <left>") 'windmove-left)
   (global-set-key (kbd "C-x <right>") 'windmove-right)
   (global-set-key (kbd "C-x <up>") 'windmove-up)
@@ -116,18 +118,6 @@
   (set-default-coding-systems 'utf-8)
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8))
-
-(defun development/go-onsave-hooks ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t))
-
-(defun development/golang-setup ()
-  (package-manager/ensure-packages-installed 'go-mode 'lsp-mode 'lsp-ui 'company 'yasnippet)
-  (setq company-idle-delay 0
-	company-minimum-prefix-length 1)
-  (add-hook 'go-mode-hook #'development/golang-onsave-hooks)
-  (add-hook 'go-mode-hook #'lsp-deferred)
-  (add-hook 'go-mode-hook #'yas-minor-mode))
 
 (defun development/html-setup ()
   (package-manager/ensure-packages-installed 'web-mode)
@@ -163,21 +153,15 @@
 	  exec-path (split-string path-from-shell path-separator))))
 
 (defun development/general-setup ()
-  (package-manager/ensure-packages-installed 'auto-complete)
+  (package-manager/ensure-packages-installed 'auto-complete 'multi-term)
   (ac-config-default))
-
-(defun development/nix-setup ()
-  (package-manager/ensure-packages-installed 'nix-mode)
-  (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode)))
 
 (defun development/setup ()
   (development/general-setup)
   (development/file-setup)
   (development/html-setup)
   (development/elisp-setup)
-  (development/golang-setup)
-  (development/devops-setup)
-  (development/nix-setup))
+  (development/devops-setup))
 
 (defun theme/gui-setup ()
   (package-manager/ensure-packages-installed 'circadian 'solarized-theme)
@@ -205,7 +189,8 @@
   (ido-mode t)
   (fset 'yes-or-no-p 'y-or-n-p)
   (display-time)
-  (menu-bar-mode -1))
+  (menu-bar-mode -1)
+  (tool-bar-mode -1))
 
 (defun theme/setup ()
   (theme/default-setup)
@@ -292,10 +277,15 @@
 (defun media/music-setup ()
   (package-manager/ensure-packages-installed 'emms)
   (setq
-   emms-player-list '(emms-player-mpv)
    emms-info-asynchronously t
    emms-show-format "♪ %s"
-   emms-playlist-default-major-mode 'emms-playlist-mode)
+   emms-source-file-default-directory "~/workspace/media/music"
+   emms-source-playlist-default-format 'm3u
+   emms-playlist-mode-center-when-go t
+   emms-playlist-default-major-mode 'emms-playlist-mode
+   emms-player-list '(emms-player-mpv)
+   emms-player-mpv-environment '("PULSE_PROP_media.role=music")
+   emms-player-mpv-parameters '("--quiet" "--really-quiet" "--no-audio-display" "--force-window=no" "--vo=null"))
   (emms-standard)
   (emms-default-players))
 
