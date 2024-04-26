@@ -81,36 +81,6 @@
 	kept-old-versions 2
 	version-control t))
 
-(defun key-bindings/setup ()
-  (global-set-key (kbd "C-c m") 'mu4e)
-  (global-set-key (kbd "C-c g") 'magit-status)
-  (global-set-key (kbd "C-c p") 'package-list-packages)
-  (global-set-key (kbd "C-c 3") 'w3m-goto-url)
-  (global-set-key (kbd "C-c w") 'w3m-browse-url)
-  (global-set-key (kbd "C-c n") 'elfeed)
-  (global-set-key (kbd "C-c t") 'multi-term)
-  (global-set-key (kbd "C-c r") 'irc)
-  (global-set-key (kbd "C-c e p") 'emms-play-directory)
-  (global-set-key (kbd "C-c e <left>") 'emms-previous)
-  (global-set-key (kbd "C-c e <right>") 'emms-next)
-  (global-set-key (kbd "C-c e <up>") 'emms-play)
-  (global-set-key (kbd "C-c e <down>") 'emms-stop)
-  (global-set-key (kbd "C-c e r") 'emms-streams)
-  (global-set-key (kbd "C-c e s") 'emms-shuffle)
-  (global-set-key (kbd "C-c e o") 'emms-playlist-mode-go)
-  (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
-  (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
-  (global-set-key (kbd "C-x <left>") 'windmove-left)
-  (global-set-key (kbd "C-x <right>") 'windmove-right)
-  (global-set-key (kbd "C-x <up>") 'windmove-up)
-  (global-set-key (kbd "C-x <down>") 'windmove-down)
-  (global-set-key (kbd "C-x C-i") 'indent-region)
-  (global-set-key (kbd "C-u") 'undo)
-  (global-set-key (kbd "M-]") 'doc-view-next-page)
-  (global-set-key (kbd "M-[") 'doc-view-previous-page)
-  (global-set-key (kbd "C-x C-y") 'utilities/pt-pbpaste)
-  (global-set-key (kbd "C-x M-w") 'utilities/pt-pbcopy))
-
 (defun development/file-setup ()
   (package-manager/ensure-packages-installed 'json-mode 'yaml-mode 'markdown-mode)
   (setq mode-require-final-newline t)
@@ -142,15 +112,19 @@
 (defun development/devops-setup ()
   (package-manager/ensure-packages-installed 'dockerfile-mode 'k8s-mode))
 
-(defun development/set-exec-path-from-shell-PATH ()
+(defun development/zsh-setup ()
   (let ((path-from-shell
 	 (replace-regexp-in-string "[ \t\n]*$" ""
-				   (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+				   (shell-command-to-string "$SHELL --login --interactive -c 'echo $PATH'"))))
     (setenv "SHELL" "/bin/zsh")
     (setenv "PATH" path-from-shell)
-    (setq exec-path (append exec-path '("/usr/local/bin"))
-	  eshell-path-env path-from-shell
-	  exec-path (split-string path-from-shell path-separator))))
+    (setq
+     exec-path (append exec-path '("/usr/local/bin"))
+     eshell-path-env path-from-shell
+     exec-path (split-string path-from-shell path-separator)))
+  (defun zsh-shell-mode-setup ()
+    (setq-local comint-process-echoes t))
+  (add-hook 'shell-mode-hook #'zsh-shell-mode-setup))
 
 (defun development/general-setup ()
   (package-manager/ensure-packages-installed 'auto-complete 'multi-term)
@@ -158,6 +132,7 @@
 
 (defun development/setup ()
   (development/general-setup)
+  (development/zsh-setup)
   (development/file-setup)
   (development/html-setup)
   (development/elisp-setup)
@@ -224,8 +199,7 @@
 
 (defun writing/org-setup ()
   (package-manager/ensure-packages-installed 'org 'org-journal)
-  (setq initial-major-mode 'org-mode
-	org-startup-truncated nil)
+  (setq org-startup-truncated nil)
   (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
   (setq org-capture-templates
 	'(("t" "Todo" entry (file org-default-notes-file)
@@ -293,13 +267,10 @@
   (package-manager/ensure-packages-installed 'elfeed 'elfeed-web)
   (setq elfeed-search-filter "-junk @6-months-ago +unread"
 	elfeed-feeds '(("https://nullprogram.com/feed/" emacs)
+		       ("https://cutlefish.substack.com/feed" product-development)
+		       ("https://www.practicemakesproduct.co/feed" product-development)
 		       ("https://www.cinephiliabeyond.org/feed/" filmmaking)
-		       ("https://kubernetes.io/feed.xml" kubernetes)
-		       ("https://blog.rust-lang.org/feed.xml" rust)
-		       ("https://sachachua.com/blog/category/emacs/feed" emacs)
-		       ("https://blog.printf.net/feed/" decentralized)
-		       ("https://emacs.cafe/feed.xml" emacs)
-		       ("https://endlessparentheses.com/atom-planet.xml" emacs))))
+		       ("https://blog.rust-lang.org/feed.xml" rust))))
 
 (defun media/ebook-setup ()
   (package-manager/ensure-packages-installed 'nov)
@@ -340,6 +311,46 @@
     (require 'seq)
     (seq-map '(lambda (repo) (version-control/clone-repo repo directory)) repos)))
 
+(defun llm/setup ()
+  (package-manager/ensure-packages-installed 'gptel)
+  (setq
+   gptel-model "llama3:8b"
+   gptel-backend (gptel-make-ollama "Ollama"
+		   :host "localhost:11434"
+		   :stream t
+		   :models '("mistral:latest" "codellama:7b" "llama3:8b"))))
+
+(defun key-bindings/setup ()
+  (global-set-key (kbd "C-c l") 'gptel)
+  (global-set-key (kbd "C-c m") 'mu4e)
+  (global-set-key (kbd "C-c g") 'magit-status)
+  (global-set-key (kbd "C-c p") 'package-list-packages)
+  (global-set-key (kbd "C-c 3") 'w3m-goto-url)
+  (global-set-key (kbd "C-c w") 'w3m-browse-url)
+  (global-set-key (kbd "C-c n") 'elfeed)
+  (global-set-key (kbd "C-c t") 'multi-term)
+  (global-set-key (kbd "C-c r") 'irc)
+  (global-set-key (kbd "C-c e p") 'emms-play-directory)
+  (global-set-key (kbd "C-c e <left>") 'emms-previous)
+  (global-set-key (kbd "C-c e <right>") 'emms-next)
+  (global-set-key (kbd "C-c e <up>") 'emms-play)
+  (global-set-key (kbd "C-c e <down>") 'emms-stop)
+  (global-set-key (kbd "C-c e r") 'emms-streams)
+  (global-set-key (kbd "C-c e s") 'emms-shuffle)
+  (global-set-key (kbd "C-c e o") 'emms-playlist-mode-go)
+  (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
+  (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
+  (global-set-key (kbd "C-x <left>") 'windmove-left)
+  (global-set-key (kbd "C-x <right>") 'windmove-right)
+  (global-set-key (kbd "C-x <up>") 'windmove-up)
+  (global-set-key (kbd "C-x <down>") 'windmove-down)
+  (global-set-key (kbd "C-x C-i") 'indent-region)
+  (global-set-key (kbd "C-u") 'undo)
+  (global-set-key (kbd "M-]") 'doc-view-next-page)
+  (global-set-key (kbd "M-[") 'doc-view-previous-page)
+  (global-set-key (kbd "C-x C-y") 'utilities/pt-pbpaste)
+  (global-set-key (kbd "C-x M-w") 'utilities/pt-pbcopy))
+
 (defun initialize () 
   (development/set-exec-path-from-shell-PATH)
   (package-manager/setup)
@@ -349,6 +360,7 @@
   (web-browser/setup)
   (development/setup)
   (writing/setup)
-  (media/setup))
+  (media/setup)
+  (llm/setup))
 
 (initialize)
