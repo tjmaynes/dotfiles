@@ -37,17 +37,3 @@ function convert-m4a-to-mp3() {
     ffmpeg -i "$f" -codec:v copy -codec:a libmp3lame -q:a 2 "$DIRECTORY"/"${f%.m4a}.mp3"
   done
 }
-
-function open_webui() {
-  STATUSCODE=$(curl --write-out '%{http_code}' --silent --output /dev/null http://localhost:8080)
-
-  if test $STATUSCODE -ne 200; then
-    docker run --name open-webui \
-      --restart always \
-      --network=host \
-      -v open-webui:/app/backend/data \
-      ghcr.io/open-webui/open-webui:main
-  fi
-
-  open http://localhost:8080
-}
