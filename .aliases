@@ -1,2 +1,4 @@
 alias workspace='cd $HOME/workspace/tjmaynes'
 alias dotfiles='cd $HOME/workspace/tjmaynes/dotfiles'
+alias k='kubectl'
+alias rack-macos='/Applications/VCV\ Rack\ 2\ Free.app/Contents/MacOS/Rack'

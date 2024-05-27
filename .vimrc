@@ -110,6 +110,7 @@ Plug 'tpope/vim-markdown'
 Plug 'junegunn/goyo.vim'
 
 Plug 'LnL7/vim-nix'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 Plug 'ekalinin/Dockerfile.vim'
 
