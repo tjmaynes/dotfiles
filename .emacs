@@ -48,6 +48,15 @@
 	 (data (json-read-file json-file)))
     data))
 
+(defun utilities/ensure-file-exists (filepath)
+  (unless (file-exists-p filepath)
+    (write-region "" nil filepath)))
+
+(defun utilities/setup-custom-file ()
+  (defconst custom-file (expand-file-name ".custom.el" (getenv "HOME")))
+  (utilities/ensure-file-exists custom-file)
+  (load custom-file))
+
 (defvar package-manager/package-manager-refreshed nil)
 
 (defun package-manager/package-manager-refresh-once ()
@@ -351,8 +360,8 @@
   (global-set-key (kbd "C-x C-y") 'utilities/pt-pbpaste)
   (global-set-key (kbd "C-x M-w") 'utilities/pt-pbcopy))
 
-(defun initialize () 
-  (development/set-exec-path-from-shell-PATH)
+(defun initialize ()
+  (utilities/setup-custom-file)
   (package-manager/setup)
   (theme/setup)
   (key-bindings/setup)
