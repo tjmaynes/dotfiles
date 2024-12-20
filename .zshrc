@@ -12,4 +12,4 @@ plugins=(git macos kubectl asdf zsh-autosuggestions zsh-completions zsh-syntax-h
 export HIST_STAMPS="mm/dd/yyyy"
 export HISTTIMEFORMAT="%F %T"
 
-[[ -f "$HOME/.zsh-dynamic" ]] && source $HOME/.zsh-dynamic
+[[ -f "$HOME/.zsh_dynamic" ]] && . $HOME/.zsh_dynamic

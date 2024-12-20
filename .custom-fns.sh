@@ -15,3 +15,11 @@ function convert-m4a-to-mp3() {
     ffmpeg -i "$f" -codec:v copy -codec:a libmp3lame -q:a 2 "$DIRECTORY"/"${f%.m4a}.mp3"
   done
 }
+
+function run-stock-picks-tool() {
+  if [[ -z "$(command -v stock-picks-optimizer)" ]]; then
+    pip install $PROJECTS_DIRECTORY/stock-picks-optimizer/dist/*.whl --force-reinstall
+  fi
+
+  stock-picks-optimizer run --config $HOME/.stock-picks-optimizer.config.yml
+}
