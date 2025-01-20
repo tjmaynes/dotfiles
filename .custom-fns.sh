@@ -16,10 +16,10 @@ function convert-m4a-to-mp3() {
   done
 }
 
-function run-stock-picks-tool() {
+function get-latest-stock-picks() {
   if [[ -z "$(command -v stock-picks-optimizer)" ]]; then
     pip install $PROJECTS_DIRECTORY/stock-picks-optimizer/dist/*.whl --force-reinstall
   fi
 
-  stock-picks-optimizer run --config $HOME/.stock-picks-optimizer.config.yml
+  stock-picks-optimizer latest
 }
