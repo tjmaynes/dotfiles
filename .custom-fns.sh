@@ -12,7 +12,7 @@ function convert-m4a-to-mp3() {
   mkdir -p "$DIRECTORY"
 
   for f in *.m4a; do
-    ffmpeg -i "$f" -codec:v copy -codec:a libmp3lame -q:a 2 "$DIRECTORY"/"${f%.m4a}.mp3"
+    ffmpeg -i "$f" -codec:v copy -codec:a libmp3lame -q:a 2 "$DIRECTORY/${f%.m4a}.mp3"
   done
 }
 
@@ -22,4 +22,12 @@ function get-latest-stock-picks() {
   fi
 
   stock-picks-optimizer latest
+}
+
+function morning-paper() {
+  pushd "$PROJECTS_DIRECTORY/morning-papers"
+  now=$(date +"%Y-%m-%d") 
+  [[ ! -f "${now}.txt" ]] && touch "${now}.txt"
+  vim "${now}.txt"
+  popd
 }
