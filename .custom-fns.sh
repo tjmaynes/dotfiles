@@ -18,16 +18,22 @@ function convert-m4a-to-mp3() {
 
 function get-latest-stock-picks() {
   if [[ -z "$(command -v stock-picks-optimizer)" ]]; then
-    pip install $PROJECTS_DIRECTORY/stock-picks-optimizer/dist/*.whl --force-reinstall
+    pip install $CODE_DIRECTORY/stock-picks-optimizer/dist/*.whl --force-reinstall
   fi
 
   stock-picks-optimizer latest
 }
 
 function morning-paper() {
-  pushd "$PROJECTS_DIRECTORY/morning-papers"
+  pushd "$CODE_DIRECTORY/morning-papers"
   now=$(date +"%Y-%m-%d") 
   [[ ! -f "${now}.txt" ]] && touch "${now}.txt"
-  vim "${now}.txt"
+  mvim +Goyo "${now}.txt"
   popd
+}
+
+function restart-docker-compose() {
+  if [[ -f "$HOME/.docker-compose.default.yml" ]]; then
+    docker compose -f "$HOME/.docker-compose.default.yml" restart
+  fi
 }
