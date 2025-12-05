@@ -13,9 +13,3 @@ export HIST_STAMPS="mm/dd/yyyy"
 export HISTTIMEFORMAT="%F %T"
 
 [[ -f "$HOME/.zsh_dynamic" ]] && . $HOME/.zsh_dynamic
-
-#[[ -n "$(command -v docker)" ]] && \
-#  [[ -f "$HOME/.docker-compose.default.yml" ]] && \
-#  [[ -n "$(command -v docker compose)" ]] && \
-#  [[ "$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:9090")" -ne 200 ]] && \
-#  docker compose -f $HOME/.docker-compose.default.yml up -d
