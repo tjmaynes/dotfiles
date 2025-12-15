@@ -38,14 +38,10 @@ function restart-docker-compose() {
   fi
 }
 
-function add_claude_mcp_servers() {
-  claude mcp add --transport http github https://api.githubcopilot.com/mcp -H "Authorization: Bearer $(echo $GITHUB_PAT | cut -d '=' -f2)"
-}
-
 function auto-commit() {
   if git diff-index --cached --quiet HEAD --; then
     echo "Error: unable to find staged files to commit..."
   else
-    git diff --staged | mods --raw 'generate a single conventional commit message based on staged changes, only the message please' | git commit -F -
+    git diff --staged | mods --quiet --raw "generate a single conventional commit message based on staged changes, only the message please, no backticks surrounding the message either. Don't read whole lock files." | git commit -F -
   fi
 }
