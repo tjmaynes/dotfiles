@@ -45,3 +45,10 @@ function auto-commit() {
     git diff --staged | mods --quiet --raw "generate a single conventional commit message based on staged changes, only the message please, no backticks surrounding the message either. Don't read whole lock files." | git commit -F -
   fi
 }
+
+function summarize-today-commits() {
+  result=$(git log --since="12 hours ago" | mods --quiet --raw "summarize")
+  echo $result | pbcopy
+
+  echo $result
+}

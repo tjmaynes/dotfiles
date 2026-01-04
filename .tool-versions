@@ -3,3 +3,4 @@ python 3.13.10
 nodejs 23.11.0
 kubectl 1.26.2
 just 1.43.1
+go 1.25.3
