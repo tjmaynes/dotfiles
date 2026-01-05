@@ -16,26 +16,12 @@ function convert-m4a-to-mp3() {
   done
 }
 
-function get-latest-stock-picks() {
-  if [[ -z "$(command -v stock-picks-optimizer)" ]]; then
-    pip install $CODE_DIRECTORY/stock-picks-optimizer/dist/*.whl --force-reinstall
-  fi
-
-  stock-picks-optimizer latest
-}
-
 function morning-paper() {
   pushd "$CODE_DIRECTORY/morning-papers"
   now=$(date +"%Y-%m-%d") 
   [[ ! -f "${now}.txt" ]] && touch "${now}.txt"
-  mvim +Goyo "${now}.txt"
+  vim +Goyo "${now}.txt"
   popd
-}
-
-function restart-docker-compose() {
-  if [[ -f "$HOME/.docker-compose.default.yml" ]]; then
-    docker compose -f "$HOME/.docker-compose.default.yml" restart
-  fi
 }
 
 function auto-commit() {
@@ -47,8 +33,5 @@ function auto-commit() {
 }
 
 function summarize-today-commits() {
-  result=$(git log --since="12 hours ago" | mods --quiet --raw "summarize")
-  echo $result | pbcopy
-
-  echo $result
+  git log --since="24 hours ago" | mods --quiet --raw "summarize"
 }

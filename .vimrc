@@ -127,7 +127,7 @@ colorscheme PaperColor
 if has("gui_running")
   set fuoptions=maxvert,maxhorz
   set transparency=3
-  set guifont=Inconsolata:h16
+  set guifont=Zed Plex Mono:h16
   set guioptions-=L
   set guioptions-=r
 endif
