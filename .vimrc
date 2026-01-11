@@ -21,7 +21,6 @@ set novisualbell                    "no yellin'
 
 set linespace=0
 set history=100                     "histoy of old commands run
-set antialias
 set autowrite                       "write before running commands
 set autochdir                       "start vim in current directory
 set hidden
