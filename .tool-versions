@@ -1,6 +1,7 @@
 direnv 2.32.1
 python 3.13.10
-nodejs 23.11.0
+nodejs 24.11.1
 kubectl 1.26.2
 just 1.43.1
 go 1.25.3
+bun 1.3.10

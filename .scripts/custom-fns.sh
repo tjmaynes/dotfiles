@@ -35,3 +35,7 @@ function auto-commit() {
 function summarize-today-commits() {
   git log --since="24 hours ago" | mods --quiet --raw "summarize"
 }
+
+function backup-git-repos() {
+  ./.scripts/backup-git-repos.sh "$CODE_DIRECTORY"
+}
